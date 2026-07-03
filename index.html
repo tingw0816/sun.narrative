@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日光的日本生活日記</title>
+  <style>
+    :root {
+      --primary: #4a90d9;
+      --primary-light: #e8f3fc;
+      --bg: #f7f5f2;
+      --card-bg: #ffffff;
+      --border: #d6e8f5;
+      --text: #2c2c2c;
+      --text-muted: #7a8fa0;
+      --radius: 14px;
+      --shadow: 0 2px 14px rgba(74,144,217,0.08);
+      --pink: #c97b8e;
+      --pink-light: #f9edf1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans TC", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex; align-items: center;
+      padding: 0 28px; gap: 16px;
+    }
+
+    .nav-logo {
+      font-size: 1rem; font-weight: 700;
+      color: var(--primary); text-decoration: none;
+      white-space: nowrap; letter-spacing: 0.01em;
+    }
+
+    .nav-search {
+      flex: 1; max-width: 380px; position: relative;
+    }
+
+    .nav-search input {
+      width: 100%;
+      padding: 7px 14px 7px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.88rem; background: var(--bg);
+      outline: none; transition: border-color 0.2s;
+      color: var(--text);
+    }
+    .nav-search input:focus { border-color: var(--primary); }
+    .nav-search input::placeholder { color: var(--text-muted); }
+
+    .nav-search .icon {
+      position: absolute; left: 11px; top: 50%;
+      transform: translateY(-50%); color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .nav-ig {
+      display: flex; align-items: center; gap: 5px;
+      text-decoration: none; color: var(--text-muted);
+      font-size: 0.82rem;
+      border: 1.5px solid var(--border);
+      padding: 5px 14px; border-radius: 999px;
+      transition: all 0.18s; white-space: nowrap;
+    }
+    .nav-ig:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 900px; margin: 52px auto 44px;
+      padding: 0 28px;
+      display: flex; align-items: center; gap: 28px;
+    }
+
+    .hero-avatar {
+      width: 86px; height: 86px; border-radius: 50%;
+      background: linear-gradient(135deg, #f9d6e3, #f7c5b5);
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 2.2rem;
+      border: 3px solid #fff; box-shadow: var(--shadow);
+    }
+
+    .hero-text h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    .hero-text p { font-size: 0.9rem; color: var(--text-muted); max-width: 480px; }
+
+    .hero-chips {
+      display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px;
+    }
+    .chip {
+      font-size: 0.75rem; padding: 3px 11px; border-radius: 999px;
+      background: var(--primary-light); color: var(--primary); font-weight: 500;
+    }
+
+    /* ── CATEGORY SECTIONS ── */
+    .categories {
+      max-width: 900px; margin: 0 auto 80px;
+      padding: 0 28px;
+      display: flex; flex-direction: column; gap: 44px;
+    }
+
+    .category-section[data-hidden="true"] { display: none; }
+
+    .category-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .category-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+
+    .category-header h2 {
+      font-size: 1.05rem; font-weight: 700;
+    }
+
+    .category-count {
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-left: auto; white-space: nowrap;
+    }
+    .category-header { cursor: pointer; user-select: none; }
+    .category-header:hover h2 { color: var(--primary); }
+    .category-toggle {
+      font-size: 0.75rem; color: var(--text-muted);
+      margin-left: 6px; transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex; flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+    .card[data-hidden="true"] { display: none; }
+
+    .card-emoji { font-size: 1.5rem; margin-bottom: 10px; }
+
+    .card h3 {
+      font-size: 0.93rem; font-weight: 600;
+      line-height: 1.4; margin-bottom: 7px;
+      flex: 1;
+    }
+
+    .card p {
+      font-size: 0.81rem; color: var(--text-muted);
+      line-height: 1.5; margin-bottom: 14px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-actions {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: auto; flex-wrap: wrap;
+    }
+
+    .card-hint {
+      font-size: 0.75rem; color: var(--primary);
+      margin-top: auto; font-weight: 500;
+      display: flex; align-items: center; gap: 3px;
+    }
+
+    /* ── LIKE BUTTON ── */
+    .like-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 10px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: transparent; color: var(--text-muted);
+      font-size: 0.78rem; cursor: pointer;
+      transition: all 0.16s; font-family: inherit; line-height: 1;
+    }
+    .like-btn:hover:not(:disabled) { border-color: var(--pink); color: var(--pink); }
+    .like-btn.liked { border-color: var(--pink); color: var(--pink); background: var(--pink-light); cursor: default; }
+    .like-btn:disabled { opacity: 0.6; cursor: wait; }
+
+    .modal-like-row { margin-bottom: 20px; }
+    .modal-like-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 20px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: transparent; color: var(--text-muted);
+      font-size: 0.9rem; cursor: pointer;
+      transition: all 0.18s; font-family: inherit;
+    }
+    .modal-like-btn:hover:not(:disabled) { border-color: var(--pink); color: var(--pink); }
+    .modal-like-btn.liked { border-color: var(--pink); color: var(--pink); background: var(--pink-light); cursor: default; }
+
+    /* ── IG LINK ── */
+    .ig-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      text-decoration: none; font-size: 0.78rem;
+      color: var(--primary);
+      border: 1.5px solid var(--primary-light);
+      padding: 5px 12px; border-radius: 8px;
+      transition: all 0.18s;
+    }
+    .ig-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.38); backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #fff; border-radius: 18px;
+      width: 100%; max-width: 520px;
+      max-height: 88vh; overflow-y: auto;
+      padding: 32px;
+      position: relative;
+      animation: modalIn 0.22s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: none; background: var(--bg); cursor: pointer;
+      font-size: 1rem; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .modal-close:hover { background: var(--border); }
+
+    .modal-cat {
+      font-size: 0.73rem; padding: 3px 10px; border-radius: 999px;
+      background: var(--primary-light); color: var(--primary);
+      font-weight: 600; display: inline-block; margin-bottom: 14px;
+    }
+    .modal-emoji { font-size: 2rem; margin-bottom: 10px; }
+    .modal-title {
+      font-size: 1.15rem; font-weight: 700;
+      line-height: 1.4; margin-bottom: 16px;
+    }
+    .modal-desc {
+      font-size: 0.9rem; color: var(--text-muted);
+      line-height: 1.75; margin-bottom: 16px;
+    }
+    .modal-detail {
+      font-size: 0.88rem; color: var(--text);
+      line-height: 1.8; margin-bottom: 24px;
+      white-space: pre-line;
+      border-top: 1px solid var(--border);
+      padding-top: 16px; margin-top: 4px;
+    }
+    .modal-ig-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 24px; border-radius: 10px;
+      background: var(--primary); color: #fff;
+      text-decoration: none; font-size: 0.88rem; font-weight: 600;
+      transition: opacity 0.18s;
+    }
+    .modal-ig-btn:hover { opacity: 0.85; }
+
+    /* ── QUICK TAGS ── */
+    .quick-tags {
+      max-width: 900px; margin: 0 auto 32px;
+      padding: 0 28px;
+    }
+    .quick-tags-label {
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-bottom: 10px; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .quick-tags-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .qtag {
+      padding: 5px 14px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg); color: var(--text-muted);
+      font-size: 0.82rem; cursor: pointer;
+      transition: all 0.16s; font-family: inherit;
+    }
+    .qtag:hover, .qtag.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* ── FOLD ── */
+    body:not(.searching) .card.folded { display: none; }
+    body.searching .fold-btn { display: none; }
+    .fold-btn {
+      display: block; width: 100%;
+      margin-top: 12px; padding: 9px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      background: transparent; color: var(--text-muted);
+      font-size: 0.82rem; cursor: pointer;
+      font-family: inherit; transition: all 0.16s;
+    }
+    .fold-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    /* ── EMPTY STATE ── */
+    .empty-global {
+      text-align: center; padding: 80px 0;
+      color: var(--text-muted); display: none;
+    }
+    .empty-global.visible { display: block; }
+    .empty-global .big { font-size: 2.5rem; margin-bottom: 10px; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 36px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--text-muted);
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+    }
+    @media (max-width: 440px) {
+      .card-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 16px; }
+      .nav-ig span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#" id="navLogo">日光的日本生活日記</a>
+
+  <div class="nav-search">
+    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="搜尋關鍵字…" />
+  </div>
+
+  <a class="nav-ig" href="https://www.instagram.com/sun_narrative" target="_blank" rel="noopener">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+    </svg>
+    <span>追蹤 IG</span>
+  </a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-avatar"><img src="avatar.jpeg" alt="大頭貼" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
+  <div class="hero-text">
+    <h1>Hi，我是日光！</h1>
+    <p>🇯🇵神戸大→ 関東在住社会人4年目・日企工程師<br>
+      🌻限動每天分享日本生活・日劇・追星＋不定期一週一貼文<br>
+      ☀️希望我的經驗能讓一樣想到日本追夢的你一點希望<br>
+      自學日文→日本交換→碩班2年→就活 #赴日經驗訪談<br>
+      📬お仕事の依頼はDMまで（日本語🙆‍♀️）</p>
+    <div class="hero-chips">
+      <span class="chip">🇯🇵 関東在住</span>
+      <span class="chip">🎓 神戸大卒</span>
+      <span class="chip">💼 日企工程師</span>
+      <span class="chip">✍️ 赴日經驗訪談</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUICK TAGS ── -->
+<div class="quick-tags">
+  <div class="quick-tags-label">熱門搜尋</div>
+  <div class="quick-tags-list" id="quickTagsList"></div>
+</div>
+
+<!-- ── CATEGORIES ── -->
+<main class="categories" id="categories">
+
+  <!-- 👤 了解我更多 -->
+  <section class="category-section" data-category="了解我更多">
+    <div class="category-header">
+      <div class="category-icon" style="background:#fef3c7;">👤</div>
+      <h2>了解我更多</h2>
+      <span class="category-count" id="count-了解我更多"></span>
+    </div>
+    <div class="card-grid">
+
+      <article class="card" data-post-id="post-intro-1"
+        data-title="聊聊我跟日本的故事"
+        data-desc="自學日文→交換留學→碩班2年→就活，一步一步走到現在的関東在住社会人。希望我的經驗能給你一點希望！"
+        data-ig="https://www.instagram.com/p/Cdnj0LMFib-/">
+        <div class="card-emoji">🇯🇵</div>
+        <h3>聊聊我跟日本的故事</h3>
+        <p>自學日文→交換留學→碩班2年→就活，一步一步走到現在的関東在住社会人。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cdnj0LMFib-/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-intro-2"
+        data-title="IG 帳號三週年：一路走來的心得"
+        data-desc="經營 IG 三年，分享挫折與成長，曾懷疑自己、也學會愛自己。未來將分享稅金、企業見學、留學回憶等更多內容。"
+        data-ig="https://www.instagram.com/p/DATZJfvz1Vl/">
+        <div class="card-emoji">🎂</div>
+        <h3>IG 帳號三週年：一路走來的心得</h3>
+        <p>經營 IG 三年，分享挫折與成長，曾懷疑自己、也學會愛自己。未來將分享更多稅金、留學回憶內容。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DATZJfvz1Vl/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-intro-jp-study"
+        data-title="我的日文自學方法"
+        data-desc="從零開始自學日文的完整方法分享，適合想到日本卻不知從何開始的你。"
+        data-ig="https://www.instagram.com/p/CegSN5EFTl9/?igsh=MTVtdnlrbDhmaWwxZg==">
+        <div class="card-emoji">📖</div>
+        <h3>我的日文自學方法</h3>
+        <p>從零開始自學日文的完整方法分享，適合想到日本卻不知從何開始的你。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CegSN5EFTl9/?igsh=MTVtdnlrbDhmaWwxZg==" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-intro-jp-tips"
+        data-title="日文進步的訣竅"
+        data-desc="分享讓日文實際進步的關鍵訣竅，不只是背單字，而是真正能用出來的學習方式。"
+        data-ig="https://www.instagram.com/p/Cq2wV3IvLx_/?igsh=NTEzeXIyN3N6bzcw">
+        <div class="card-emoji">✨</div>
+        <h3>日文進步的訣竅</h3>
+        <p>分享讓日文實際進步的關鍵訣竅，不只是背單字，而是真正能用出來的學習方式。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cq2wV3IvLx_/?igsh=NTEzeXIyN3N6bzcw" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-uniqlo"
+        data-title="在 UNIQLO 打工學到的事"
+        data-desc="分享在日本 UNIQLO 打工的親身經驗，從客服到職場文化，對後續就活幫助很大。"
+        data-ig="https://www.instagram.com/p/CkIyl_FPno4/">
+        <div class="card-emoji">🛍️</div>
+        <h3>在 UNIQLO 打工學到的事</h3>
+        <p>在日本 UNIQLO 打工的親身經驗，了解日本企業文化，為正職就活打下基礎。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CkIyl_FPno4/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r2"
+        data-title="日本機場工作機會：薪資與門檻一次看"
+        data-desc="日本七大機場（羽田、成田、關西等）工作職缺整理，包含保全、地勤、免稅店，薪資 20–24 萬日幣，提供住宿與簽證協助。"
+        data-ig="https://www.instagram.com/p/C8OKfArPfts/">
+        <div class="card-emoji">✈️</div>
+        <h3>日本機場工作機會：薪資與門檻一次看</h3>
+        <p>日本七大機場工作職缺整理，薪資 20–24 萬日幣，提供住宿與簽證協助。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C8OKfArPfts/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 🗣️ 赴日經驗訪談 -->
+  <section class="category-section" data-category="赴日經驗訪談">
+    <div class="category-header">
+      <div class="category-icon" style="background:#f3e8ff;">🗣️</div>
+      <h2>赴日經驗訪談</h2>
+      <span class="category-count" id="count-赴日經驗訪談"></span>
+    </div>
+    <div class="card-grid">
+
+      <article class="card" data-post-id="interview-erika"
+        data-title="訪談 Erika：人生不只一條路"
+        data-desc="Manager 身份工作的 Erika 分享在日本的職涯歷程，強調人生路不止一條，找到目標就能走出自己的路。"
+        data-ig="https://www.instagram.com/p/C1owEAMP1xX/">
+        <div class="card-emoji">👩‍💼</div>
+        <h3>訪談 Erika：人生不只一條路</h3>
+        <p>Manager 身份工作的 Erika 分享職涯轉折，包含就活與轉職心路歷程。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C1owEAMP1xX/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="interview-liang"
+        data-title="訪談 亮不魯不：從早稻田到外資 IT"
+        data-desc="亮不魯不 分享從早稻田大學到外資 IT 公司的職涯規劃，以及在東京生活與不動產的第一手經驗。"
+        data-ig="https://www.instagram.com/p/C1HOZSKvS9m/">
+        <div class="card-emoji">💻</div>
+        <h3>訪談 亮不魯不：從早稻田到外資 IT</h3>
+        <p>從頂尖大學到外資 IT 公司，亮不魯不 分享就活策略、職場文化與東京生活心得。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C1HOZSKvS9m/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="interview-kiso"
+        data-title="既卒就活也能成功！匿名求職心路歷程"
+        data-desc="以匿名方式分享以既卒身份在日本日本就職活動指南的實際過程，給錯過新卒時程的人的鼓勵與建議。"
+        data-ig="https://www.instagram.com/p/C1CRCTqPkN6/">
+        <div class="card-emoji">🎌</div>
+        <h3>既卒就活也能成功！匿名求職心路歷程</h3>
+        <p>沒趕上新卒時程也不要放棄！匿名分享以既卒身份重新出發的求職心路歷程。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C1CRCTqPkN6/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="interview-yichi"
+        data-title="訪談 YICHI：插畫専門学校後的自由職業之路"
+        data-desc="YICHI 分享就讀日本插畫専門学校後，在京都以自由接案為業的生活與職涯選擇。"
+        data-ig="https://www.instagram.com/p/CsJAsA-vCb3/">
+        <div class="card-emoji">🎨</div>
+        <h3>訪談 YICHI：插畫専門学校後的自由職業</h3>
+        <p>從台灣到日本插畫専門学校，YICHI 在京都以自由接案為業，分享非典型路線的點滴。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CsJAsA-vCb3/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 🎓 留學 -->
+  <section class="category-section" data-category="留學">
+    <div class="category-header">
+      <div class="category-icon" style="background:#e0f2fe;">🎓</div>
+      <h2>留學</h2>
+      <span class="category-count" id="count-留學"></span>
+    </div>
+    <div class="card-grid">
+
+      <article class="card" data-post-id="visa-koudo"
+        data-title="高度人才簽證申請懶人包"
+        data-desc="分享親身申請日本高度人才簽證的過程，包含備件準備、入管局辦理流程與注意事項。"
+        data-ig="https://www.instagram.com/p/Cy3LCVHPP3Y/">
+        <div class="card-emoji">🪪</div>
+        <h3>高度人才簽證申請懶人包</h3>
+        <p>親身走過高度人才簽證申請流程，備件準備到入管局辦理一次說清楚。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cy3LCVHPP3Y/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="study-luggage"
+        data-title="日本留學行李懶人包"
+        data-desc="整理赴日留學打工度假必備行李清單，含證件、SIM 卡、日幣換匯與海外提款信用卡等建議。"
+        data-ig="https://www.instagram.com/p/CwP3CPIvJRS/">
+        <div class="card-emoji">🧳</div>
+        <h3>日本留學行李懶人包</h3>
+        <p>赴日留學打工度假前的行李清單，證件、SIM 卡、換匯、信用卡通通整理好。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CwP3CPIvJRS/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="grad-scholarship"
+        data-title="日本研究所獎學金申請 × 備考書單"
+        data-desc="分享申請日本研究所獎學金的準備心得，以及 EJU 考試與研究計畫書的推薦書單。"
+        data-ig="https://www.instagram.com/p/Cu4J_-uvser/">
+        <div class="card-emoji">📚</div>
+        <h3>日本研究所獎學金申請 × 備考書單</h3>
+        <p>EJU 考試、研究計畫書怎麼準備？分享研究所獎學金申請的親身過程與實用書單。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cu4J_-uvser/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="exchange-japanese"
+        data-title="交換留學生提升日語的省錢方法"
+        data-desc="在日本交換留學期間，透過一對一語言交換與日語教室，以最低成本快速提升日語能力。"
+        data-ig="https://www.instagram.com/p/Cq2wV3IvLx_/">
+        <div class="card-emoji">🗾</div>
+        <h3>交換留學生提升日語的省錢方法</h3>
+        <p>交換留學期間如何低成本提升日語？語言交換 × 日語教室，讓開口說日語不再困難。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cq2wV3IvLx_/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="exchange-memory"
+        data-title="4 個月的神戶大學交換留學回憶錄"
+        data-desc="回顧 2018-2019 在神戶大學交換留學的 4 個月，分享讓人生觀徹底改變的留學體驗。"
+        data-ig="https://www.instagram.com/p/CdVpjVSFcAl/">
+        <div class="card-emoji">🌸</div>
+        <h3>4 個月的神戶大學交換留學回憶錄</h3>
+        <p>2018 年在神戶大學的 4 個月，是如何徹底改變我的人生觀與未來方向的？</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CdVpjVSFcAl/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="scholarship-private"
+        data-title="日本私費獎學金申請指南"
+        data-desc="整理在日本留學可申請的私費獎學金資訊，強調真誠與學習熱情比日語程度更重要。"
+        data-ig="https://www.instagram.com/p/CcnJym2FwiG/">
+        <div class="card-emoji">💰</div>
+        <h3>日本私費獎學金申請指南</h3>
+        <p>留學日本有哪些私費獎學金可以申請？面試不需要完美日語，真誠與熱忱更重要。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CcnJym2FwiG/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+    <!-- 💼 日本就職活動指南 -->
+  <section class="category-section" data-category="日本就職活動指南">
+    <div class="category-header">
+      <div class="category-icon" style="background:#e8f5e9;">💼</div>
+      <h2>日本就職活動指南</h2>
+      <span class="category-count" id="count-日本就職活動指南"></span>
+    </div>
+    <div class="card-grid">
+
+      <article class="card" data-post-id="post-r1"
+        data-title="日本就活 5 大門檻對策"
+        data-desc="分享日本新卒就活第 3 年的經驗，往後將著重採訪他人最新就活資訊與個人職涯規劃分享。"
+        data-ig="https://www.instagram.com/p/C758ZHwv5fl/">
+        <div class="card-emoji">🎯</div>
+        <h3>日本就活 5 大門檻對策</h3>
+        <p>分享日本新卒就活親身經驗，以及如何突破外國人求職的 5 大常見門檻。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C758ZHwv5fl/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+
+
+      <article class="card" data-post-id="job-it-transition"
+        data-title="文科生轉職 IT！必看 5 個學習資源"
+        data-desc="整理 5 個文科生轉職 IT 工程師的學習資源，包含 Progate、Kindle Unlimited 等免費 / 低成本工具。"
+        data-ig="https://www.instagram.com/p/C1_38mjPR0y/">
+        <div class="card-emoji">👩‍💻</div>
+        <h3>文科生轉職 IT！必看 5 個學習資源</h3>
+        <p>沒有理工背景也能在日本當工程師？5 個低成本學習資源幫你順利轉職 IT 業界。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C1_38mjPR0y/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-liberal-engineer"
+        data-title="文科生也能在日本當工程師？"
+        data-desc="探討日本企業為何錄用文科工程師，以及新卒採用與中途採用的差異，附技術證照建議。"
+        data-ig="https://www.instagram.com/p/C1RlUtMPIHH/">
+        <div class="card-emoji">🖥️</div>
+        <h3>文科生也能在日本當工程師？</h3>
+        <p>為什麼日本公司會錄用文科工程師？新卒 vs 中途採用的差異與建議一次說清楚。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C1RlUtMPIHH/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-qa"
+        data-title="日本工作 Q&amp;A 懶人包"
+        data-desc="整理過去蒐集的日本工作常見問題，統整成貼文方便查閱，涵蓋日企、打工度假、就活等各面向。"
+        data-ig="https://www.instagram.com/p/C03y7xbvtYw/">
+        <div class="card-emoji">❓</div>
+        <h3>日本工作 Q&amp;A 懶人包</h3>
+        <p>日企、打工度假、留學就活各種問題一次解答，過去蒐集的 Q&A 全整理在這。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C03y7xbvtYw/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-interview-4q"
+        data-title="日本就活必問 4 大面試問題"
+        data-desc="整理日本就職活動面試中必問的 4 個問題，強調內容比敬語完美更重要，鼓勵真誠表達。"
+        data-ig="https://www.instagram.com/p/Cpzv-mdPEFW/">
+        <div class="card-emoji">🎤</div>
+        <h3>日本就活必問 4 大面試問題</h3>
+        <p>面試官一定會問的 4 個問題，附答題思路——內容比敬語完美更重要！</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cpzv-mdPEFW/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-webtest"
+        data-title="日本就活 Webtest 攻略完全指南"
+        data-desc="分享日本新卒就活第一道關卡——網路測試的備考方式，推薦 YouTube 教程與練習資源。"
+        data-ig="https://www.instagram.com/p/ChuNLcPvy7w/">
+        <div class="card-emoji">💡</div>
+        <h3>日本就活 Webtest 攻略完全指南</h3>
+        <p>就活第一關就是 Webtest！推薦備考資源，無法避開也有繞道方案可以參考。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/ChuNLcPvy7w/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-company-research"
+        data-title="外國人就活企業研究方法"
+        data-desc="分享日本就活的企業研究方式，外國人需特別注意簽證支援，建議優先選擇上市公司或大型集團子公司。"
+        data-ig="https://www.instagram.com/p/CcXsY_tFEn9/">
+        <div class="card-emoji">🔍</div>
+        <h3>外國人就活企業研究方法</h3>
+        <p>外國人就活選公司要特別注意簽證支援，上市公司或大型集團子公司較有保障。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CcXsY_tFEn9/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-gd"
+        data-title="集體面試・GD 初體驗：3 小時緊張變自信"
+        data-desc="分享第一次挑戰大型企業集體討論面試的過程，從極度緊張到信心大增，最終通過第一關。"
+        data-ig="https://www.instagram.com/p/CcNj4NmlDBH/">
+        <div class="card-emoji">👥</div>
+        <h3>集體面試・GD 初體驗：3 小時緊張變自信</h3>
+        <p>第一次集體討論面試長達 3 小時，緊張到汗流浹背，但最後通過了！心路歷程完整分享。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CcNj4NmlDBH/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-intl-interview"
+        data-title="留學生常見面試問題解析"
+        data-desc="分享面試官如何看待留學生，以及回答「為何選擇在日本工作」等常見問題的技巧。"
+        data-ig="https://www.instagram.com/p/Cb7cM3QF8DG/">
+        <div class="card-emoji">🌏</div>
+        <h3>留學生常見面試問題解析</h3>
+        <p>面試官怎麼看留學生？解析「為何來日本工作」等高頻問題的回答技巧與準備方向。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/Cb7cM3QF8DG/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-interview-tips"
+        data-title="日本就活面試技巧①：與台灣的差異"
+        data-desc="分享日本就活面試與台灣的差異，強調溝通能力比語言完美度更重要，建議用合作例子展現人際能力。"
+        data-ig="https://www.instagram.com/p/CbhqJ4zFrf4/">
+        <div class="card-emoji">💬</div>
+        <h3>日本就活面試技巧①：與台灣的差異</h3>
+        <p>日本面試和台灣差在哪裡？HR 最在意溝通力，用實際合作例子展現才是關鍵。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CbhqJ4zFrf4/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-apps"
+        data-title="就活必備 App 與求職網站整理"
+        data-desc="整理日本就活必備平台：マイナビ、リクナビ、ワンキャリア、みん就、openwork，以及 Webtest 練習工具。"
+        data-ig="https://www.instagram.com/p/CbZ2trJlGHy/">
+        <div class="card-emoji">📲</div>
+        <h3>就活必備 App 與求職網站整理</h3>
+        <p>マイナビ、リクナビ等企業研究平台 + Webtest 練習工具，就活必備清單一次看完。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CbZ2trJlGHy/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="job-intro"
+        data-title="日本就職活動完全入門"
+        data-desc="針對有意在日本就職的留學生，從合同説明会到內定，完整介紹日本新卒就活的時程與流程。"
+        data-ig="https://www.instagram.com/p/CaHcmbtFJ6B/">
+        <div class="card-emoji">📋</div>
+        <h3>日本就職活動完全入門</h3>
+        <p>從合説到內定，日本新卒就活的時程與流程完整介紹，有意在日就職的留學生必看。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CaHcmbtFJ6B/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 🏠 日常生活 -->
+  <section class="category-section" data-category="日常生活">
+    <div class="category-header">
+      <div class="category-icon" style="background:#fff3e0;">🏠</div>
+      <h2>日常生活</h2>
+      <span class="category-count" id="count-日常生活"></span>
+    </div>
+    <div class="card-grid">
+
+      <article class="card" data-post-id="post-r4"
+        data-title="日本電信公司使用心得比較"
+        data-desc="分享在日本使用各家電信業者的體驗，比較優缺點，幫助在日生活的你選出最適合的方案。"
+        data-ig="https://www.instagram.com/p/DNXzlEBTQ0J/">
+        <div class="card-emoji">📱</div>
+        <h3>日本電信公司使用心得比較</h3>
+        <p>分享各家電信業者的親身體驗，優缺點一次比較，在日生活選門號不再煩惱。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DNXzlEBTQ0J/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r5"
+        data-title="在日本生活節約術：把錢花在值得的地方"
+        data-desc="壓低固定支出（水電、房租、訂閱制）、善用故鄉納稅與點數回饋、追蹤旅遊優惠帳號找便宜機票。"
+        data-ig="https://www.instagram.com/p/DIbL5xYzSfm/">
+        <div class="card-emoji">💰</div>
+        <h3>在日本生活節約術：把錢花在值得的地方</h3>
+        <p>壓低固定支出、善用故鄉納稅與點數回饋、找便宜機票，每月省下更多錢去旅行。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DIbL5xYzSfm/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r6"
+        data-title="日本集點省錢術：信用卡 × 便利商店回饋"
+        data-desc="善用信用卡回饋、便利商店集點、ポイ活 App，理性消費累積點數，達成省錢目標。"
+        data-ig="https://www.instagram.com/p/DFcoB_4TCHl/">
+        <div class="card-emoji">🎰</div>
+        <h3>日本集點省錢術：信用卡 × 便利商店回饋</h3>
+        <p>善用信用卡回饋、便利商店集點、ポイ活 App 比較網站，不需為了集點而消費。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DFcoB_4TCHl/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r7"
+        data-title="積立 NISA 成果分享：小額投資入門"
+        data-desc="分享積立 NISA 存股心得，適合保守型投資者。強調長期、分散、累積，一人只能開一個帳戶。"
+        data-ig="https://www.instagram.com/p/DAqTT1XTTeT/">
+        <div class="card-emoji">📈</div>
+        <h3>積立 NISA 成果分享：小額投資入門</h3>
+        <p>分享積立 NISA 存股心得，長期、分散、累積，適合保守型投資者的入門選擇。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DAqTT1XTTeT/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r8"
+        data-title="日本搬家公司 5 間經驗談 + 比價網站"
+        data-desc="整理 5 間日本搬家公司的親身及親友實際使用經驗，並推薦搬家比價網站，幫你找到最划算的方案。"
+        data-ig="https://www.instagram.com/p/C3uYvJrvt4r/">
+        <div class="card-emoji">📦</div>
+        <h3>日本搬家公司 5 間經驗談 + 比價網站</h3>
+        <p>整理 5 間日本搬家公司的使用心得，並推薦比價網站，在日本搬家前必看。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C3uYvJrvt4r/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+
+      <article class="card" data-post-id="life-room-check"
+        data-title="看房必確認的 5 件事"
+        data-desc="整理在日本看公寓時必做的 5 件確認事項，避免入住後後悔的實用看房清單。"
+        data-ig="https://www.instagram.com/p/C3FivxDPPiC/">
+        <div class="card-emoji">🔑</div>
+        <h3>看房必確認的 5 件事</h3>
+        <p>看日本公寓時有哪些細節不能漏？5 個必確認事項，避免入住後才發現問題。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C3FivxDPPiC/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="life-rent-fail"
+        data-title="日本租屋失敗談：踩過的坑全記錄"
+        data-desc="分享在日本租屋犯下的錯誤，即使做過功課仍踩到奇特條款，為後來者整理預防清單。"
+        data-ig="https://www.instagram.com/p/C2uLa3tPecC/">
+        <div class="card-emoji">🏚️</div>
+        <h3>日本租屋失敗談：踩過的坑全記錄</h3>
+        <p>做足功課還是踩坑了！分享日本租屋親身踩雷經驗，讓你少走彎路。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/C2uLa3tPecC/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="life-money-habits"
+        data-title="新社會人必做的 5 件金錢管理事"
+        data-desc="分享入職第一年的金錢管理心得，從零開始建立緊急備用金，附 5 個必做理財習慣。"
+        data-ig="https://www.instagram.com/p/CqF5mfMv5vh/">
+        <div class="card-emoji">💴</div>
+        <h3>新社會人必做的 5 件金錢管理事</h3>
+        <p>入職第一年如何從零建立緊急備用金？5 個金錢管理習慣，讓財務更有掌控感。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/CqF5mfMv5vh/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+
+      <article class="card" data-post-id="life-birthday"
+        data-title="在日本過生日：實用優惠券蒐集"
+        data-desc="整理日本各店家的生日優惠券與特典，包含 USJ、迪士尼等主題樂園的生日福利。"
+        data-ig="https://www.instagram.com/p/ChZm_KIPyyW/">
+        <div class="card-emoji">🎂</div>
+        <h3>在日本過生日：實用優惠券蒐集</h3>
+        <p>日本生日有哪些免費特典和優惠券？從主題樂園到各大品牌，一次蒐集起來！</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/ChZm_KIPyyW/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+      <article class="card" data-post-id="post-r3"
+        data-title="社會人必知：NISA、ふるさと納税節稅攻略"
+        data-desc="新手員工必知基本稅務知識，包含 NISA、ふるさと納税、扶養控除等節稅制度，外國人還可申請海外送金扶養節稅。"
+        data-ig="https://www.instagram.com/p/DK60J36zYov/">
+        <div class="card-emoji">💴</div>
+        <h3>社會人必知：NISA、ふるさと納税節稅攻略</h3>
+        <p>新手員工必知稅務制度，NISA、ふるさと納税、扶養控除一次搞懂，外國人也適用。</p>
+        <div class="card-actions">
+          <a class="ig-link" href="https://www.instagram.com/p/DK60J36zYov/" target="_blank" rel="noopener">看 IG 貼文 ↗</a>
+          <button class="like-btn"><span class="like-icon">♡</span> <span class="like-count">…</span></button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Global empty state -->
+  <div class="empty-global" id="emptyGlobal">
+    <div class="big">🔍</div>
+    <p>找不到「<span id="emptyQuery"></span>」相關內容，換個關鍵字試試？</p>
+  </div>
+
+</main>
+
+<!-- ── 煩惱商談 ── -->
+<section id="consultation" style="background:#fff; border-top:1px solid var(--border); padding:64px 0;">
+  <div style="max-width:900px; margin:0 auto; padding:0 28px;">
+
+    <div style="background:var(--bg); border-radius:var(--radius); padding:36px 32px; border:1px solid var(--border); text-align:center;">
+      <div style="font-size:2rem; margin-bottom:10px;">💬</div>
+      <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:12px;">煩惱商談</h2>
+      <p style="font-size:0.9rem; color:var(--text-muted); max-width:480px; margin:0 auto 24px;">
+        關於日本留學、日本就職活動指南、生活上的煩惱都可以問我！<br>
+        也可以看看我在 <a href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MjM1MDMxNzQ5MDg0ODU1?story_media_id=3034887066593765869&igsh=cnBwa3hhMmR0eHlu" target="_blank" rel="noopener" style="color:var(--primary);">IG 限時動態回答過的問題</a>。
+      </p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; align-items:center;">
+
+        <a href="https://marshmallow-qa.com/messages" target="_blank" rel="noopener"
+          style="display:inline-flex; align-items:center; gap:8px;
+            padding:13px 26px; border-radius:12px;
+            background:#ffe066; color:#2c2c2c;
+            font-size:0.92rem; font-weight:700;
+            text-decoration:none; transition:opacity 0.18s;
+            box-shadow:0 2px 8px rgba(255,224,102,0.45);">
+          🍡 匿名問我問題
+        </a>
+
+        <a href="https://ig.me/m/sun_narrative" target="_blank" rel="noopener" class="btn-ig">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+          IG 私訊我
+        </a>
+
+      </div>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:16px;">透過 Marshmallow 可以匿名提問，IG 私訊也歡迎 · 最晚 10 天內回覆</p>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .qa-card {
+    display:flex; align-items:center; gap:12px;
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:12px; padding:16px;
+    text-decoration:none; color:var(--text);
+    transition:all 0.18s;
+  }
+  .qa-card:hover { border-color:var(--primary); box-shadow:var(--shadow); transform:translateY(-1px); }
+  .qa-icon { font-size:1.6rem; flex-shrink:0; }
+  .qa-title { font-size:0.85rem; font-weight:600; margin-bottom:3px; }
+  .qa-sub { font-size:0.75rem; color:var(--primary); }
+
+  .btn-ig {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:9px 18px; border-radius:9px;
+    border:1.5px solid var(--border);
+    color:var(--text-muted); font-size:0.85rem;
+    text-decoration:none; transition:all 0.18s;
+  }
+  .btn-ig:hover { border-color:var(--primary); color:var(--primary); }
+
+  @media (max-width:600px) {
+    #qaGrid { grid-template-columns:1fr !important; }
+  }
+</style>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <span class="modal-cat" id="modalCat"></span>
+    <div class="modal-emoji" id="modalEmoji"></div>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div class="modal-like-row">
+      <button class="modal-like-btn" id="modalLikeBtn">
+        <span id="modalLikeIcon">♡</span>
+        <span id="modalLikeCount">…</span>
+        <span style="font-size:0.8rem; color:var(--text-muted); margin-left:2px;">人覺得有幫助</span>
+      </button>
+    </div>
+    <div class="modal-detail" id="modalDetail"></div>
+    <a class="modal-ig-btn" id="modalIgBtn" href="#" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+      前往 IG 貼文 ↗
+    </a>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>整理自 IG <a href="https://www.instagram.com/sun_narrative" target="_blank" rel="noopener">@sun_narrative</a> 的分享內容 · 持續更新中</p>
+  <p style="margin-top:6px">有問題歡迎到 IG 私訊我 🙌</p>
+</footer>
+
+<script>
+  // ── Supabase 設定（請替換為你的真實值）──
+  const SUPABASE_URL     = 'https://irpxagnpooiynmtwtsua.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlycHhhZ25wb29peW5tdHd0c3VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTAzNzEsImV4cCI6MjA5NzY4NjM3MX0.LmeSEPOxJ5XOGfGk7kSNNkskAUy4kXE_cym8-_xj3sE';
+  const EDGE_FUNC_BASE   = SUPABASE_URL + '/functions/v1';
+
+  // ── Search ──
+  const searchInput = document.getElementById('searchInput');
+  const sections    = Array.from(document.querySelectorAll('.category-section'));
+
+  function updateCounts() {
+    sections.forEach(sec => {
+      const cat     = sec.dataset.category;
+      const cards   = Array.from(sec.querySelectorAll('.card'));
+      const visible = cards.filter(c => c.dataset.hidden !== 'true').length;
+      const el = document.getElementById('count-' + cat);
+      if (el) el.textContent = visible + ' 篇';
+      sec.dataset.hidden = visible === 0 ? 'true' : 'false';
+    });
+  }
+
+  function doSearch(q) {
+    const query = q.trim().toLowerCase();
+    let total = 0;
+
+    document.querySelectorAll('.card').forEach(card => {
+      const title = (card.dataset.title || '').toLowerCase();
+      const desc  = (card.dataset.desc  || '').toLowerCase();
+      const text  = card.textContent.toLowerCase();
+      const match = !query || title.includes(query) || desc.includes(query) || text.includes(query);
+      card.dataset.hidden = match ? 'false' : 'true';
+      if (match) total++;
+    });
+
+    updateCounts();
+
+    // 搜尋中展開所有折疊；清空搜尋後恢復折疊
+    document.body.classList.toggle('searching', query.length > 0);
+
+    const emptyGlobal = document.getElementById('emptyGlobal');
+    const emptyQuery  = document.getElementById('emptyQuery');
+    if (query) {
+      if (emptyQuery) emptyQuery.textContent = q.trim();
+      if (emptyGlobal) emptyGlobal.classList.toggle('visible', total === 0);
+    } else {
+      if (emptyGlobal) emptyGlobal.classList.remove('visible');
+    }
+  }
+
+  let _searchLogTimer = null;
+  searchInput.addEventListener('input', e => {
+    const val = e.target.value;
+    doSearch(val);
+    clearTimeout(_searchLogTimer);
+    if (val.trim().length >= 2) {
+      _searchLogTimer = setTimeout(() => logSearchKeyword(val.trim()), 1500);
+    }
+    document.querySelectorAll('.qtag').forEach(b => b.classList.remove('active'));
+  });
+
+  // ── Quick tags ──
+  function bindQtags() {
+    document.querySelectorAll('.qtag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const isActive = btn.classList.contains('active');
+        document.querySelectorAll('.qtag').forEach(b => b.classList.remove('active'));
+        if (isActive) {
+          searchInput.value = '';
+          doSearch('');
+        } else {
+          btn.classList.add('active');
+          const q = btn.dataset.q;
+          searchInput.value = q;
+          doSearch(q);
+          logSearchKeyword(q);
+        }
+      });
+    });
+  }
+
+  // ── Card detail content ──
+  const DETAILS = {
+    '我的日文自學方法':
+`從零開始自學日文，分享我親身走過的學習路徑 📖
+
+點擊前往 IG 查看完整分享 ↗`,
+
+    '日文進步的訣竅':
+`讓日文真正進步的關鍵訣竅 ✨
+
+不只是背單字，而是能實際用出來的學習方式。
+
+點擊前往 IG 查看完整分享 ↗`,
+
+    '聊聊我跟日本的故事':
+`從台灣到日本，我走了一條慢慢摸索出來的路 ☀️
+
+📖 我的來日過程：
+・從零開始自學日文
+・申請到日本交換留學
+・考上研究所，在日碩班讀了 2 年
+・畢業後參加日本就活，拿到內定
+・現在是関東在住的社会人 4 年目・日企工程師
+
+這條路不是最快的，但每一步都是真實走過的。
+希望我的經驗能讓一樣想到日本追夢的你，看到一點希望 🌻
+
+歡迎來 IG 跟我聊聊你的日本夢！`,
+
+    'IG 帳號三週年：一路走來的心得':
+`經營 IG 帳號到了第三年 🎂
+
+這一路走來有過挫折——曾因回覆訊息被誤認為是追蹤者，一度懷疑自己。
+男友提醒我「不必回覆所有人」，讓我想起最初的目的：幫助人。
+
+學到最重要的事：要先愛自己，允許自己休息。
+
+往後計畫分享的內容：
+・日本稅金制度
+・企業見學
+・留學回憶
+・更多職涯規劃心得
+
+按自己的步調前進就好 🌱`,
+
+    '日本就活 5 大門檻對策':
+`外國人在日本日本就職活動指南的 5 大常見門檻：
+
+① 語言能力要求（大多需要 N2 以上）
+② 日本新卒採用制度不熟悉
+③ 自己紹介、志望動機書寫方式
+④ 面試文化差異（敬語、態度）
+⑤ 簽證身份限制
+
+持續分享最新就活資訊與職涯規劃，歡迎私訊提問 🙌`,
+
+    '日本機場工作機會：薪資與門檻一次看':
+`日本七大機場工作職缺整理：
+・羽田空港　・成田空港　・關西國際空港
+・中部國際空港　・新千歲空港 等
+
+📋 職缺類型：
+保全 / 服務台 / 地勤 / 免稅店 / 辦公室內勤
+
+💴 薪資：20–24 萬日幣
+🏠 提供住宿
+📄 協助辦理工作簽證
+
+想了解更多請看 IG 貼文 ↗`,
+
+    '社會人必知：NISA、ふるさと納税節稅攻略':
+`在日本工作的新手員工必知稅務制度：
+
+📌 積立 NISA
+→ 每年最多 40 萬日幣免稅投資額度
+
+📌 ふるさと納税（故鄉納稅）
+→ 捐款給地方政府、換取答禮品，享稅金扣除
+
+📌 扶養控除
+→ 外國人也可申請「海外送金扶養」，養父母可節稅！
+
+📌 医療費控除
+→ 年醫療費超過 10 萬日幣可申報扣除
+
+詳細內容請看 IG 貼文 ↗`,
+
+    '日本電信公司使用心得比較':
+`在日本用過好幾家電信，整理給大家：
+
+📱 推薦選擇：
+・IIJmio — 穩定、便宜，適合留學生
+・楽天Mobile — 前幾 GB 免費，省錢首選
+
+⚠️ 注意事項：
+・外國人辦門號需要在留卡 + 銀行帳戶
+・部分業者只有日文客服
+
+詳細比較請看 IG 貼文 ↗`,
+
+    '在日本生活節約術：把錢花在值得的地方':
+`壓低支出、把錢留給真正重要的體驗！
+
+💡 固定支出：
+・談判房租 or 換便宜的房子
+・取消用不到的訂閱服務
+・水電瓦斯可貨比三家
+
+💡 變動支出：
+・伙食費：自炊 + 超市折扣時段
+・善用故鄉納稅換取食材
+
+💡 旅行：
+・追蹤航空公司特價帳號
+・研究マイル活（里程數活動）
+
+每個人生活方式不同，找到適合自己的就好 🙌`,
+
+    '日本集點省錢術：信用卡 × 便利商店回饋':
+`理性集點，不為了集點而多花錢！
+
+💳 推薦信用卡：
+・楽天カード（楽天ポイント高回饋）
+・PayPayカード（PayPay 連動）
+
+🏪 便利商店：
+・7-Eleven → nanacoポイント
+・FamilyMart → Vポイント
+・Lawson → Pontaポイント
+
+📱 集點工具：
+・ポイ活比較 App：ポイントサイト系
+・比較網站找最高點數
+
+💡 累積的點數可在特定店家折抵現金，每月省不少！`,
+
+    '積立 NISA 成果分享：小額投資入門':
+`積立 NISA 是日本政府提供的免稅投資制度，適合保守型投資者入門 📈
+
+📌 基本規則：
+・一人只能開一個帳戶
+・每年上限 40 萬日幣
+・投資期間最長 20 年
+・收益完全免稅！
+
+📚 投資哲學：長期・分散・積立
+
+💡 建議透過ポイ活 App 開設帳戶，可獲得額外點數回饋。
+
+適合完全不懂投資的人從這裡開始 🌱`,
+
+    '日本搬家公司 5 間經驗談 + 比價網站':
+`在日本搬家前，建議一定要先比價！
+
+📦 使用過的搬家公司心得（本人＋朋友實際經驗）：
+・アート引越センター — 服務好，價格偏高
+・サカイ引越センター — 性價比高，推薦
+・アリさんマークの引越社 — 便宜但要注意細節
+・ハート引越センター — 小資族首選
+・日本通運 — 大型搬家、長途搬家推薦
+
+💻 推薦比價網站：
+引越し侍（ひっこしざむらい）可一次比較多家
+
+詳細請看 IG 貼文 ↗`,
+
+    '訪談 Erika：人生不只一條路':
+`在日本以 Manager 身份工作的 Erika 接受了訪談。
+
+她強調：人生的路不只一條，找到自己的目標，就能走出屬於自己的路。
+
+🎯 職涯歷程：
+・就活 → 職場適應 → 轉職 → 升任 Manager
+
+💡 心得分享：
+・改變計劃不等於失敗，彈性才是優勢
+・了解自己的目標，是找到方向的第一步
+
+點擊前往 IG 查看完整訪談 ↗`,
+
+    '訪談 亮不魯不：從早稻田到外資 IT':
+`亮不魯不 畢業於早稻田大學，目前在外資 IT 公司工作。
+
+🏢 職涯重點：
+・早稻田大學 → 外資 IT 公司
+・分享就活策略與選公司邏輯
+・東京生活 × 不動產購屋經驗
+
+💡 對後輩的建議：
+・提早開始企業研究
+・外資公司流程與日企截然不同
+
+點擊前往 IG 查看完整訪談 ↗`,
+
+    '既卒就活也能成功！匿名求職心路歷程':
+`以匿名方式分享——以「既卒」身份重新出發參加日本就活的完整歷程。
+
+📌 什麼是既卒就活？
+→ 大學畢業後沒有馬上就職，再以應屆後的身份參加就活
+
+🎯 分享重點：
+・錯過新卒時程的心理調適
+・如何找到願意錄用既卒的企業
+・最終拿到內定的關鍵
+
+💌 給也在考慮的你：
+沒趕上時程不等於結束，許多人和你一樣走出來了。
+
+點擊前往 IG 查看完整訪談 ↗`,
+
+    '訪談 YICHI：插畫専門学校後的自由職業之路':
+`YICHI 從台灣到日本就讀插畫専門学校，畢業後選擇在京都以自由接案為業。
+
+🎨 YICHI 的故事：
+・台灣 → 日本插畫専門学校
+・畢業後定居京都，以插畫自由工作者身份生活
+・分享工作簽證、案源經營與日本生活點滴
+
+💡 適合想走非典型路線的你：
+・創作類専門学校怎麼選？
+・自由職業者如何在日本生活與工作？
+
+IG：@yichi_illustrate（歡迎追蹤）
+
+點擊前往 IG 查看完整訪談 ↗`,
+
+    '高度人才簽證申請懶人包':
+`親身走過日本高度人才簽證（高度専門職）的申請流程！
+
+📋 高度人才簽證是什麼？
+→ 依據學歷、職業、年收等積分制度，達標可申請的優惠簽證
+
+✅ 申請所需文件（參考）：
+・在職證明 / 勞動契約
+・卒業証明書
+・納稅証明
+・積分計算表
+
+🏛️ 辦理流程：
+準備文件 → 入管局提交 → 等待審查（約 1-3 個月）
+
+💡 小提醒：
+積分計算方式定期更新，申請前確認最新版本！
+
+點擊前往 IG 查看完整說明 ↗`,
+
+    '日本留學行李懶人包':
+`赴日留學 × 打工度假行李清單整理！
+
+📄 重要證件：
+・護照（確認有效期）
+・在台日文翻譯戶籍謄本
+・保險相關文件
+
+📱 通訊：
+・SIM 卡（建議抵日前購買預付卡）
+・Wi-Fi 分享器考慮是否需要
+
+💴 金錢：
+・換好日幣（建議帶現金備用）
+・辦理可海外提款的信用卡（如 Charles Schwab 等）
+
+🧴 生活：
+・1-2 週份的日常用品（日本買得到但剛到時方便）
+
+點擊前往 IG 查看完整清單 ↗`,
+
+    '日本研究所獎學金申請 × 備考書單':
+`分享申請日本研究所（研究生 → 正式院生）並準備獎學金的完整歷程。
+
+📚 EJU（日本留學試験）備考書單：
+・日本語：蛋糕系列、J. TEST 練習題
+・理科・數學：各科目別問題集
+
+📝 研究計畫書準備：
+・明確研究主題 × 研究方法
+・找指導教授溝通是關鍵
+
+💰 獎學金種類：
+・JASSO 獎學金
+・各大學自有獎學金
+・民間財團獎學金
+
+點擊前往 IG 查看完整書單 ↗`,
+
+    '交換留學生提升日語的省錢方法':
+`在日本交換留學期間提升日語能力的低成本方法！
+
+🗣️ 方法 1：語言交換（Language Exchange）
+・找想學中文的日本學生 1 對 1 練習
+・各大學通常有語言交換配對系統
+・完全免費！
+
+📖 方法 2：日語教室 / 地域日語教室
+・地方政府辦的日語班，免費或低費用
+・老師都是志工，很熱心
+
+💡 心得：
+比補習班便宜，又能交到日本朋友，是雙贏！
+
+點擊前往 IG 查看更多 ↗`,
+
+    '4 個月的神戶大學交換留學回憶錄':
+`2018 年 10 月 ～ 2019 年 3 月，在神戶大學交換留學的 4 個月。
+
+🌸 這段時間改變了我：
+・從只喜歡日本，變成決定要在日本生活
+・開始認真學日語，不再只停留在旅遊日文
+
+🎓 交換留學生活片段：
+・神戶大學山上校區的美麗風景
+・與各國留學生的交流
+・獨自旅行各地的冒險
+
+💌 給考慮去交換的你：
+不需要日語很好才能去——去了之後自然會進步！
+
+點擊前往 IG 查看回憶錄 ↗`,
+
+    '日本私費獎學金申請指南':
+`留學日本，除了 JASSO 還有很多私費獎學金可以申請！
+
+💰 私費獎學金特色：
+・不需要日語 N1，真誠與熱忱更重要
+・金額各異，通常 2-8 萬日幣 / 月
+・需要自己主動查詢、提出申請
+
+📋 申請流程（一般）：
+① 查詢各財團募集訊息
+② 準備申請書 × 推薦信 × 成績單
+③ 通過書類審查 → 面試
+④ 通知結果
+
+🔍 哪裡找獎學金資訊？
+・學校留學支援中心公告
+・JASSO 獎學金情報サービス
+
+點擊前往 IG 查看詳細資訊 ↗`,
+
+    '文科生轉職 IT！必看 5 個學習資源':
+`沒有理工背景也可以在日本當工程師！
+
+📚 5 個推薦學習資源：
+
+① Progate（免費 / 付費）
+→ 網頁式程式學習，完全初學者也能上手
+
+② Kindle Unlimited
+→ 訂閱制，讀技術書超划算
+
+③ YouTube 教程
+→ 免費，找日文頻道同步練日語
+
+④ Paiza（練習題平台）
+→ 日本 IT 就活常用的程式練習平台
+
+⑤ 実務書籍（入門書）
+→ 推薦先從 HTML/CSS → JavaScript → 選擇後端語言
+
+點擊前往 IG 查看詳細推薦 ↗`,
+
+    '文科生也能在日本當工程師？':
+`在日本，文科生轉當工程師是完全可行的！
+
+🤔 為什麼日本公司錄用文科工程師？
+・日本大企業新卒採用不分科系
+・重視思考力、溝通能力、學習意願
+・文科生往往有更強的文書能力
+
+📊 新卒 vs 中途採用：
+・新卒：較有機會以非技術背景進入
+・中途：幾乎要求實務經驗，但也有例外
+
+📜 建議取得的資格：
+・基本情報技術者（FE）
+・AWS 初級認定
+
+詳細說明請看 IG 貼文 ↗`,
+
+    '日本工作 Q&A 懶人包':
+`整理過去蒐集到的日本工作相關問題，統整成懶人包方便查閱！
+
+💬 涵蓋主題：
+・日系企業 vs 外資企業的差異
+・打工度假者可以做什麼工作？
+・留學生就活時程怎麼安排？
+・轉職時機與技巧
+・語言能力要求標準
+
+❓ 精選問答節錄：
+Q: N2 夠用嗎？
+A: 視職種而定，IT / 工程類有時 N3 就夠，業務類幾乎都要 N2+
+
+點擊前往 IG 查看完整 Q&A ↗`,
+
+    '日本就活必問 4 大面試問題':
+`日本就活面試中幾乎 100% 會被問到的 4 個問題！
+
+❶ 自己紹介（自我介紹）
+→ 1 分鐘版本，邏輯清晰比背稿更重要
+
+❷ 志望動機（為何想進這家公司）
+→ 要具體，不能只說「因為喜歡這間公司」
+
+❸ 学生時代に頑張ったこと（大學最努力的事）
+→ 展現過程、結果、學到的事
+
+❹ 将来のビジョン（未來的規劃）
+→ 與公司方向結合，誠實但積極
+
+💡 記住：內容比敬語完美更重要！
+
+點擊前往 IG 查看詳細解析 ↗`,
+
+    '在 UNIQLO 打工學到的事':
+`在日本 UNIQLO 打工，意外學到很多職場知識！
+
+🛍️ 工作內容：
+・接待顧客、收銀、商品整理
+・庫存管理與陳列作業
+
+💡 學到最重要的事：
+
+① 日本顧客服務標準之高
+→ 讓我對「顧客對應」有全新認識
+
+② 日語溝通能力大提升
+→ 在壓力下說日語，進步超快
+
+③ 了解日本企業文化
+→ 開會方式、打招呼方式、職場禮儀
+
+🎯 對就活的幫助：
+打工經驗成為面試的具體案例素材！
+
+點擊前往 IG 查看完整分享 ↗`,
+
+    '日本就活 Webtest 攻略完全指南':
+`日本新卒就活的第一道關卡——Webtest（SPI / 玉手箱等）！
+
+📊 常見 Webtest 種類：
+・SPI3（最常見）
+・玉手箱
+・TG-WEB
+・GAB
+
+📚 備考方式：
+① 購買對應題型的練習書
+② YouTube 免費解題教程
+③ LINE 匿名聊天室找測驗名稱練習
+
+💡 繞道方案：
+・尋找不使用 Webtest 的企業
+→ 多為新興企業、外資、新創
+・使用就活エージェント（仲介）可能規避某些考試
+
+點擊前往 IG 查看詳細攻略 ↗`,
+
+    '外國人就活企業研究方法':
+`外國人在日本就活，企業研究有幾個特別需要注意的地方！
+
+🔍 研究重點（外國人特別注意）：
+
+① 簽證支援是否明確
+→ 優先選「上市企業」或大型集團子公司
+
+② 外國人錄用實績
+→ 有前例才比較容易通過
+
+③ 職場環境評價
+→ 善用 Openwork 查看離職率與評分
+
+📱 推薦研究平台：
+・みん就（業界情報）
+・Openwork（職場評價）
+・ワンキャリア（選考過程分享）
+
+點擊前往 IG 查看詳細方法 ↗`,
+
+    '集體面試・GD 初體驗：3 小時緊張變自信':
+`第一次挑戰大型企業的集體討論（グループディスカッション / GD）！
+
+😰 事前心境：
+・從沒做過，超級緊張
+・一群日本學生裡的外國人
+・3 小時的選考讓我非常忐忑
+
+🗣️ GD 現場：
+・題目發下來，30 分鐘討論
+・要主動發言、整理意見
+・時間管理很重要
+
+😤 轉折點：
+討論到一半，突然找到切入點——自信心就這樣回來了！
+
+✅ 結果：第一關通過！
+
+💡 心得：
+別因為是外國人就退縮，積極參與才是致勝關鍵。
+
+點擊前往 IG 查看完整分享 ↗`,
+
+    '留學生常見面試問題解析':
+`面試官怎麼看留學生？以下是最常見的幾個問題與回答建議！
+
+❓ 高頻問題：
+
+① 「なぜ日本で働きたいですか？」
+→ 說具體原因，避免只說「喜歡日本文化」
+
+② 「日本語はどのくらい話せますか？」
+→ 誠實評估，並說明持續進步中
+
+③ 「日本の〇〇（業界）についてどう思いますか？」
+→ 事前做企業研究，帶觀點去回答
+
+④ 「卒業後は日本に残りますか？」
+→ 明確表達長期在日發展的意願
+
+💡 重點：
+面試官更在意你的邏輯和熱忱，語言不完美沒關係。
+
+點擊前往 IG 查看詳細解析 ↗`,
+
+    '日本就活面試技巧①：與台灣的差異':
+`日本就活面試和台灣差在哪裡？
+
+🇯🇵 日本面試特點：
+
+① 重視「コミュニケーション能力」
+→ HR 最常說應徵者缺乏溝通能力
+→ 要用合作、團隊的例子來展現
+
+② 重視「一貫性」
+→ 自我介紹、志望動機、未來目標要連貫
+
+③ 「聞く力」（傾聽能力）也很重要
+→ 不只是說話，也要展現善於聆聽
+
+🇹🇼 vs 🇯🇵：
+台灣面試較直接問能力，日本更重視態度與潛力。
+
+💡 技巧：
+用 STAR 法則（情境、任務、行動、結果）架構你的回答！
+
+點擊前往 IG 查看詳細技巧 ↗`,
+
+    '就活必備 App 與求職網站整理':
+`整理日本就活必備的求職平台與 App！
+
+🏢 企業研究平台：
+・マイナビ — 日本最大新卒求職平台
+・リクナビ — 同上，互補使用
+・ワンキャリア — 先輩の選考體驗分享
+・みん就 — 同業學生情報交流
+・Openwork — 社員の口コミ・評價
+
+📝 Webtest 練習：
+・LINE 匿名聊天室：搜尋測驗名稱找練習群組
+
+💡 使用建議：
+・マイナビ + リクナビ：資訊蒐集
+・ワンキャリア：實際選考流程研究
+・Openwork：最終決定前確認公司評價
+
+點擊前往 IG 查看詳細整理 ↗`,
+
+    '日本就職活動完全入門':
+`給想在日本工作的留學生——日本就活完全入門！
+
+📅 新卒就活時程（大略）：
+・大三下（3 月）：解禁，資訊蒐集開始
+・大四上（6 月）：正式面試開始
+・大四上（10 月）：內定式（正式錄用確認）
+
+🗺️ 就活流程：
+ES 提出 → 書類審查 → 適性検査（Webtest）→ 面接（複数回）→ 內定
+
+💡 外國人特別注意：
+・提早開始，別以為流程和台灣一樣
+・N2 是基本門檻，N1 更有競爭力
+・找支援外國人就活的資源
+
+我後來分享了約 10 篇就活相關系列，歡迎往後翻！
+
+點擊前往 IG 查看完整入門說明 ↗`,
+
+    '看房必確認的 5 件事':
+`在日本看公寓，這 5 件事一定要現場確認！
+
+① 電力容量（アンペア数）
+→ 舊公寓可能只有 20A，用電器多會跳電
+
+② 地板防護
+→ 搬入時鋪保護墊，避免事後被扣押金
+
+③ 公告欄內容
+→ 規定多的物件入住後可能麻煩
+
+④ 採光方向
+→ 北向房在日本冬天日照少、潮濕
+
+⑤ 附近環境
+→ 白天看房看不到的問題，晚上再去看一次
+
+📍 記得拍照記錄現場狀況！
+
+點擊前往 IG 查看完整清單 ↗`,
+
+    '日本租屋失敗談：踩過的坑全記錄':
+`做足功課還是踩坑了！分享在日本租屋的真實失敗經驗。
+
+😅 我犯了什麼錯？
+・以為看過網路攻略就沒問題
+・沒有仔細看合約裡的奇特條款
+・輕忽了「現場確認」的重要性
+
+📝 踩雷清單：
+・禁止使用洗衣機（沒看到條款）
+・押金計算方式比想像中複雜
+・近鄰問題在簽約前完全不知道
+
+🛡️ 事後建議：
+・合約逐條閱讀
+・有疑問一定要問仲介
+・善用不動産サイトの口コミ
+
+之後會分享看房注意事項 × 搬家公司經驗！
+
+點擊前往 IG 查看詳細失敗談 ↗`,
+
+    '新社會人必做的 5 件金錢管理事':
+`出社會第一年，養成這 5 個金錢管理習慣！
+
+① 記帳（家計簿）
+→ 先知道錢去哪裡，才知道怎麼省
+
+② 設定「緊急備用金」目標
+→ 建議先存 3-6 個月的生活費
+
+③ 自動轉帳存款
+→ 薪水入帳就先轉一筆去存款帳戶
+
+④ 信用卡只用一張
+→ 集中消費紀錄，點數也好累積
+
+⑤ 了解公司的福利制度
+→ 住宅補助、交通費全額支給等不要漏領
+
+💡 入職一年後成功從零建立緊急備用金！
+
+點擊前往 IG 查看詳細分享 ↗`,
+
+
+    '在日本過生日：實用優惠券蒐集':
+`在日本過生日有很多免費特典可以用！
+
+🎂 主題樂園：
+・USJ — 生日當天有特別驚喜
+・迪士尼 — 生日徽章（可以免費要）
+
+🛍️ 各大品牌：
+（生日月份可獲得折扣券或免費兌換）
+・咖啡廳 / 甜點店
+・美妝品牌
+・書店、唱片行
+
+💡 怎麼蒐集優惠？
+・各品牌 App 加入會員，設定生日
+・信用卡通常也有生日 bonus 點數
+
+🎁 自己一個人過生日也要好好對自己！
+
+點擊前往 IG 查看完整優惠清單 ↗`
+  };
+
+  // ── 填入 category + detail ──
+  document.querySelectorAll('.category-section').forEach(sec => {
+    sec.querySelectorAll('.card').forEach(card => {
+      card.dataset.category = sec.dataset.category;
+      const title = card.dataset.title;
+      if (title && DETAILS[title]) card.dataset.detail = DETAILS[title];
+      if (!card.dataset.ig) card.dataset.ig = 'https://www.instagram.com/sun_narrative';
+    });
+  });
+
+  // ── Modal ──
+  const overlay     = document.getElementById('modalOverlay');
+  const modalLikeBtn = document.getElementById('modalLikeBtn');
+
+  function openModal(card) {
+    const postId  = card.dataset.postId || '';
+    const liked   = getLikedPosts().includes(postId);
+    const cardCount = card.querySelector('.like-count')?.textContent || '0';
+
+    document.getElementById('modalCat').textContent    = card.dataset.category || '';
+    document.getElementById('modalEmoji').textContent  = card.querySelector('.card-emoji')?.textContent || '';
+    document.getElementById('modalTitle').textContent  = card.dataset.title || '';
+    document.getElementById('modalDesc').textContent   = card.dataset.desc  || '';
+    document.getElementById('modalDetail').textContent = card.dataset.detail || '';
+    document.getElementById('modalIgBtn').href         = card.dataset.ig || '#';
+
+    modalLikeBtn.dataset.postId = postId;
+    document.getElementById('modalLikeIcon').textContent  = liked ? '♥' : '♡';
+    document.getElementById('modalLikeCount').textContent = cardCount;
+    modalLikeBtn.classList.toggle('liked', liked);
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Card click → modal (exclude ig-link and like-btn) ──
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.ig-link') || e.target.closest('.like-btn')) return;
+      openModal(card);
+    });
+
+    const btn = card.querySelector('.like-btn');
+    if (btn) {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        handleLike(card.dataset.postId);
+      });
+    }
+  });
+
+  modalLikeBtn.addEventListener('click', () => {
+    handleLike(modalLikeBtn.dataset.postId);
+  });
+
+  // ── Likes ──
+  function getLikedPosts() {
+    try { return JSON.parse(localStorage.getItem('liked_posts') || '[]'); } catch { return []; }
+  }
+
+  function markLiked(postId) {
+    const arr = getLikedPosts();
+    if (!arr.includes(postId)) arr.push(postId);
+    localStorage.setItem('liked_posts', JSON.stringify(arr));
+  }
+
+  function applyLikedState() {
+    const liked = getLikedPosts();
+    document.querySelectorAll('.card').forEach(card => {
+      if (!liked.includes(card.dataset.postId)) return;
+      const btn = card.querySelector('.like-btn');
+      if (btn) {
+        btn.classList.add('liked');
+        const icon = btn.querySelector('.like-icon');
+        if (icon) icon.textContent = '♥';
+      }
+    });
+  }
+
+  async function loadLikeCounts() {
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/likes?select=post_id', {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (!res.ok) return;
+      const rows = await res.json();
+      const counts = {};
+      rows.forEach(r => { counts[r.post_id] = (counts[r.post_id] || 0) + 1; });
+      document.querySelectorAll('.card[data-post-id]').forEach(card => {
+        const pid = card.dataset.postId;
+        const el  = card.querySelector('.like-count');
+        if (el) el.textContent = counts[pid] || 0;
+      });
+    } catch(e) {
+      document.querySelectorAll('.like-count').forEach(el => el.textContent = '0');
+    }
+  }
+
+  async function handleLike(postId) {
+    if (!postId) return;
+    if (getLikedPosts().includes(postId)) return;
+
+    const cardBtn  = document.querySelector(`.card[data-post-id="${postId}"] .like-btn`);
+    const isModal  = modalLikeBtn.dataset.postId === postId;
+
+    if (cardBtn) cardBtn.disabled = true;
+    if (isModal) modalLikeBtn.disabled = true;
+
+    try {
+      const res = await fetch(EDGE_FUNC_BASE + '/like', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({ post_id: postId })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        const count = data.count ?? 0;
+        if (cardBtn) {
+          cardBtn.querySelector('.like-count').textContent = count;
+          cardBtn.classList.add('liked');
+          const icon = cardBtn.querySelector('.like-icon');
+          if (icon) icon.textContent = '♥';
+        }
+        if (isModal) {
+          document.getElementById('modalLikeCount').textContent = count;
+          document.getElementById('modalLikeIcon').textContent  = '♥';
+          modalLikeBtn.classList.add('liked');
+        }
+        markLiked(postId);
+      } else {
+        alert(data.error || '按讚失敗，請稍後再試');
+      }
+    } catch(e) {
+      alert('網路異常，請稍後再試');
+    }
+
+    if (cardBtn) cardBtn.disabled = false;
+    if (isModal) modalLikeBtn.disabled = false;
+  }
+
+  // ── Search logging ──
+  async function logSearchKeyword(keyword) {
+    if (!keyword || keyword.trim().length < 2) return;
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/search_logs', {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ keyword: keyword.trim() })
+      });
+    } catch(e) {}
+  }
+
+
+  // ── Popular keywords ──
+  async function loadPopularKeywords() {
+    try {
+      const res = await fetch(
+        SUPABASE_URL + '/rest/v1/search_logs?select=keyword&limit=500&order=created_at.desc',
+        { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY } }
+      );
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (!rows.length) return;
+
+      const counts = {};
+      rows.forEach(r => {
+        const k = (r.keyword || '').trim();
+        if (k) counts[k] = (counts[k] || 0) + 1;
+      });
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k]) => k);
+      if (!top.length) return;
+
+      const EMOJI = {
+        '留學':'🎓', '日本就職活動指南':'💼', '簽證':'📋', 'N2':'📖',
+        '租屋':'🔑', '省錢':'💰', '面試':'🎤', '銀行':'🏦',
+        '語言學校':'🏫', '在留卡':'🪪', '簽証':'📋'
+      };
+      const list = document.getElementById('quickTagsList');
+      list.innerHTML = '';
+      top.forEach(kw => {
+        const btn = document.createElement('button');
+        btn.className = 'qtag';
+        btn.dataset.q = kw;
+        btn.textContent = (EMOJI[kw] ? EMOJI[kw] + ' ' : '') + kw;
+        list.appendChild(btn);
+      });
+      bindQtags();
+    } catch(e) {}
+  }
+
+  // ── Fold：標題收起整個分類；底部按鈕展開多餘卡片 ──
+  const MAX_FOLD = 3;
+  document.querySelectorAll('.category-section').forEach(sec => {
+    const cards  = Array.from(sec.querySelectorAll('.card'));
+    const grid   = sec.querySelector('.card-grid');
+    const header = sec.querySelector('.category-header');
+
+    // 標題箭頭
+    const arrow = document.createElement('span');
+    arrow.className = 'category-toggle';
+    arrow.textContent = ' ▾';
+    header.querySelector('h2').appendChild(arrow);
+
+    // 標題點擊：收起／展開整個分類
+    header.addEventListener('click', () => {
+      const collapsed = grid.style.display === 'none';
+      grid.style.display = collapsed ? '' : 'none';
+      arrow.textContent  = collapsed ? ' ▾' : ' ▴';
+      if (foldBtn) foldBtn.style.display = collapsed ? '' : 'none';
+    });
+
+    // 底部「查看更多」按鈕（超過 MAX_FOLD 才加）
+    let foldBtn = null;
+    if (cards.length <= MAX_FOLD) return;
+
+    const extra = cards.length - MAX_FOLD;
+    cards.slice(MAX_FOLD).forEach(c => c.classList.add('folded'));
+
+    foldBtn = document.createElement('button');
+    foldBtn.className = 'fold-btn';
+    foldBtn.textContent = `查看更多（${extra} 篇）▾`;
+
+    foldBtn.addEventListener('click', () => {
+      const expanded = foldBtn.dataset.expanded === 'true';
+      if (expanded) {
+        cards.slice(MAX_FOLD).forEach(c => c.classList.add('folded'));
+        foldBtn.textContent = `查看更多（${extra} 篇）▾`;
+        foldBtn.dataset.expanded = 'false';
+      } else {
+        cards.forEach(c => c.classList.remove('folded'));
+        foldBtn.textContent = '收起 ▴';
+        foldBtn.dataset.expanded = 'true';
+      }
+    });
+
+    grid.after(foldBtn);
+  });
+
+  // ── 點標題回到原始狀態 ──
+  document.getElementById('navLogo').addEventListener('click', e => {
+    e.preventDefault();
+
+    // 清除搜尋
+    searchInput.value = '';
+    doSearch('');
+
+    // 取消所有 qtag active
+    document.querySelectorAll('.qtag').forEach(b => b.classList.remove('active'));
+
+    // 展開所有被標題收起的分類
+    document.querySelectorAll('.category-section').forEach(sec => {
+      const grid  = sec.querySelector('.card-grid');
+      const arrow = sec.querySelector('.category-toggle');
+      if (grid) grid.style.display = '';
+      if (arrow) arrow.textContent = ' ▾';
+    });
+
+    // 收起所有「查看更多」（回到折疊狀態）
+    document.querySelectorAll('.fold-btn').forEach(btn => {
+      if (btn.dataset.expanded === 'true') btn.click();
+      btn.style.display = '';
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── Init ──
+  bindQtags();
+  updateCounts();
+  applyLikedState();
+  loadLikeCounts();
+  loadPopularKeywords();
+</script>
+
+</body>
+</html>
