@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seoul Solo Trip Kit</title>
+<style>
+  body {
+    background: #F5EDDA;
+    color: #3B2E1F;
+    padding: 28px 14px 60px;
+  }
+  #tg-app {
+    --paper: #FBF6EC; --paper2: #F5EDDA; --card: #FFFFFF;
+    --ink: #3B2E1F; --muted: #8A7A63; --line: #EEE3CC;
+    --accent: #F2A65A; --accent2: #E8895C;
+    --ok: #5B8A3A; --ng: #C4432B; --unsure: #B8923A;
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Segoe UI', sans-serif;
+    background: var(--paper); color: var(--ink);
+    max-width: 480px; margin: 0 auto; border-radius: 20px; overflow: hidden;
+    position: relative; min-height: 640px;
+  }
+  #tg-app * { box-sizing: border-box; }
+  .serif { font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif; }
+
+  #tg-main { padding: 14px 18px 30px; min-height: 560px; }
+
+  .top-bar { display:flex; align-items:center; gap:10px; margin-bottom: 6px; }
+  .back-btn {
+    width:34px; height:34px; border-radius:50%; border:none; background:var(--card);
+    box-shadow:0 2px 6px rgba(59,46,31,0.08); display:flex; align-items:center; justify-content:center;
+    font-size:16px; cursor:pointer; color:var(--ink); flex-shrink:0;
+  }
+  .top-title { font-size:13px; color:var(--muted); }
+
+  /* ---------- top tab nav ---------- */
+  .tab-nav {
+    display:flex; gap:6px; overflow-x:auto; padding: 12px 0 10px;
+    position: sticky; top:0; background: var(--paper); z-index: 10;
+  }
+  .tab-btn {
+    flex-shrink:0; font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer;
+  }
+  .tab-btn.active { background: var(--accent2); border-color: var(--accent2); color:#fff; }
+
+  .hero { padding: 6px 2px 14px; }
+  .hero .eyebrow { font-size:11px; letter-spacing:1.5px; color:var(--accent2); font-weight:700; }
+  .hero h1 { font-size:28px; margin:4px 0 2px; font-weight:600; }
+  .hero .sub { font-size:12.5px; color:var(--muted); }
+
+  /* ---------- day cards / stop cards ---------- */
+  .day-header h2 { font-size:24px; margin:2px 0 4px; }
+  .day-header .d-desc { font-size:12.5px; color:var(--muted); margin-bottom: 16px; }
+  .stop-card { background: var(--card); border-radius: 18px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(59,46,31,0.06); display: flex; gap: 12px; align-items: center; }
+  .stop-icon { width: 44px; height:44px; border-radius:14px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:20px; background: var(--paper2); }
+  .stop-body { flex:1; min-width:0; }
+  .stop-time { font-size:10.5px; color:var(--accent2); font-weight:700; }
+  .stop-name { font-size:15px; font-weight:600; margin-top:1px; }
+  .stop-kr { font-size:11px; color:var(--muted); }
+  .stop-highlight { font-size:11.5px; color:var(--ink); opacity:0.75; margin-top:3px; line-height:1.4; }
+  .stop-cuisine { font-size:11px; color:var(--accent2); font-weight:700; margin-top:2px; }
+  .stop-alt { font-size:10px; color:var(--unsure); margin-top:4px; }
+  .detail-btn { font-size:11.5px; font-weight:600; color: var(--accent2); background: var(--paper2);
+    border:none; border-radius:999px; padding:6px 12px; margin-top:8px; cursor:pointer; }
+  .note-card { padding: 6px 16px 6px 60px; font-size:12px; color: var(--muted); margin-bottom: 10px; }
+
+  /* ---------- places page ---------- */
+  .filter-strip { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
+  .filter-pill { flex-shrink:0; font-size:12px; padding:7px 14px; border-radius:999px; border:1px solid var(--line);
+    background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; }
+  .filter-pill.active { background: var(--accent2); border-color: var(--accent2); color:#fff; }
+  .place-row { background: var(--card); border-radius:16px; padding:12px 14px; margin-bottom:10px;
+    display:flex; gap:12px; align-items:center; cursor:pointer; box-shadow: 0 3px 10px rgba(59,46,31,0.05); }
+  .place-row .stop-icon { width:38px; height:38px; font-size:17px; }
+  .footer-link { text-align:center; margin-top:10px; }
+  .footer-link a { font-size:12px; color:var(--muted); text-decoration:underline; }
+
+  /* ---------- sources page ---------- */
+  .source-group { margin-bottom: 20px; }
+  .source-group h3 { font-size:13px; color:var(--accent2); margin-bottom:8px; }
+  .source-item { background: var(--card); border-radius:14px; padding:10px 14px; margin-bottom:8px; font-size:12px; }
+  .source-item .s-name { font-weight:600; color:var(--ink); }
+  .source-item a { color: var(--accent2); word-break: break-all; font-size:11px; text-decoration:none; }
+  .source-item .s-missing { color: var(--unsure); font-size:11px; font-style: italic; }
+
+  /* ---------- detail modal (place) ---------- */
+  .modal-overlay { position:absolute; inset:0; background: var(--paper); z-index:30; overflow-y:auto; padding-bottom: 30px; }
+  .modal-close { position: sticky; top:12px; left:12px; width:34px; height:34px; border-radius:50%;
+    border:none; background:rgba(255,255,255,0.9); box-shadow:0 2px 8px rgba(0,0,0,0.12);
+    font-size:16px; cursor:pointer; margin: 12px 0 0 12px; z-index: 5; }
+  .carousel { height: 190px; margin: -34px 0 0; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+  .carousel-slide { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:60px; }
+  .carousel-dots { position:absolute; bottom:10px; display:flex; gap:5px; left:50%; transform:translateX(-50%); }
+  .c-dot { width:6px; height:6px; border-radius:50%; background:rgba(59,46,31,0.25); }
+  .c-dot.active { background: var(--accent2); }
+  .carousel-note { text-align:center; font-size:10.5px; color:var(--muted); margin-top:6px; }
+  .gmaps-photo-link { display:block; text-align:center; font-size:11.5px; color:var(--accent2); margin: 4px 0 10px; text-decoration:underline; }
+  .detail-body { padding: 0 20px; }
+  .detail-title { font-size:24px; font-weight:600; margin: 4px 0 2px; }
+  .detail-kr { font-size:13px; color: var(--muted); }
+  .detail-roman { font-size:12px; color: var(--muted); }
+  .info-grid { margin: 16px 0; display:flex; flex-direction:column; gap:10px; }
+  .info-row { display:flex; gap:10px; font-size:12.5px; }
+  .info-row .i-label { width: 78px; flex-shrink:0; color: var(--accent2); font-weight:700; }
+  .info-row .i-val { flex:1; color: var(--ink); line-height:1.5; }
+  .section-block { margin: 18px 0; padding: 16px; background: var(--card); border-radius:16px; }
+  .section-block h4 { font-size:12.5px; color: var(--accent2); margin:0 0 10px; }
+  .badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; color:#fff; }
+  .badge.ok { background: var(--ok); } .badge.ng { background: var(--ng); } .badge.unsure { background: var(--unsure); }
+  .jp-source { font-size:11px; color: var(--muted); line-height:1.6; }
+  .jp-source a { color: var(--accent2); }
+  .link-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top: 6px; }
+  .ext-link { font-size:12px; text-decoration:none; padding:8px 13px; border-radius:12px; background: var(--paper2);
+    color: var(--ink); font-weight:600; display:flex; align-items:center; gap:5px; }
+  .ext-link.primary { background: var(--accent2); color:#fff; }
+  .alt-row { display:flex; gap:8px; overflow-x:auto; margin-top:8px; }
+  .alt-card { flex-shrink:0; width: 140px; background: var(--paper2); border-radius:14px; padding:10px; cursor:pointer; }
+  .alt-card .a-name { font-size:12px; font-weight:700; }
+  .alt-card .a-note { font-size:10.5px; color:var(--muted); margin-top:2px; }
+
+  /* ================= PREP DASHBOARD ================= */
+  .prep-progress { background: var(--card); border-radius:18px; padding:16px; margin-bottom:16px; }
+  .prep-progress .pp-num { font-size:20px; font-weight:700; }
+  .prep-track { height:8px; background:var(--paper2); border-radius:4px; overflow:hidden; margin-top:8px; }
+  .prep-fill { height:100%; background: var(--accent2); border-radius:4px; transition: width 0.25s; }
+
+  .due-soon { background: #FFF1E0; border: 1px dashed var(--accent2); border-radius:16px; padding:14px 16px; margin-bottom:16px; }
+  .due-soon h4 { font-size:12px; color:var(--accent2); margin:0 0 8px; }
+  .due-item { font-size:12.5px; margin-bottom:4px; }
+  .due-item .due-date { font-weight:700; color:var(--accent2); margin-right:6px; }
+  .due-ok { font-size:13px; color: var(--ok); font-weight:600; }
+
+  .prep-filter-strip { display:flex; gap:8px; overflow-x:auto; margin-bottom: 14px; }
+
+  .prep-section { background: var(--card); border-radius:18px; margin-bottom:14px; overflow:hidden; }
+  .prep-section-head { padding:14px 16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .prep-section-head h3 { font-size:14.5px; margin:0; }
+  .prep-section-head .ps-en { font-size:10.5px; color:var(--muted); display:block; }
+  .prep-section-head .ps-caret { font-size:14px; color:var(--muted); transition: transform 0.2s; }
+  .prep-section-body { padding: 0 16px 14px; }
+  .prep-group-label { font-size:11.5px; font-weight:700; color:var(--accent2); margin:10px 0 6px; }
+
+  .task-row { display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-top:1px solid var(--paper2); }
+  .task-row:first-child { border-top:none; }
+  .task-check {
+    width:22px; height:22px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; margin-top:1px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:700;
+  }
+  .task-check.doing { border-color: var(--unsure); background: repeating-linear-gradient(45deg, var(--unsure), var(--unsure) 3px, transparent 3px, transparent 6px); opacity:0.55; }
+  .task-check.done { border-color: var(--ok); background: var(--ok); }
+  .task-label { font-size:13px; line-height:1.5; flex:1; }
+  .task-label.done-text { text-decoration: line-through; color: var(--muted); }
+  .task-badge { display:inline-block; font-size:10px; background: var(--paper2); color:var(--accent2); font-weight:700;
+    border-radius:999px; padding:2px 8px; margin-left:6px; }
+  .task-recheck { font-size:10px; color: var(--unsure); margin-left:6px; }
+
+  .info-card { background: var(--paper2); border-radius:14px; padding:12px 14px; margin: 8px 0; font-size:12.5px; line-height:1.7; }
+  .info-card .ic-title { font-weight:700; color: var(--accent2); margin-bottom:4px; }
+
+  .flight-card, .hotel-card { background: var(--paper2); border-radius:14px; padding:14px; margin-bottom:10px; }
+  .flight-card .fc-route { font-size:15px; font-weight:700; }
+  .flight-card .fc-time { font-size:12.5px; color:var(--muted); margin-top:2px; }
+
+  .form-field { margin-bottom:10px; }
+  .form-field label { font-size:11.5px; color:var(--muted); display:block; margin-bottom:4px; }
+  .form-field input, .form-field select {
+    width:100%; padding:9px 11px; border-radius:10px; border:1px solid var(--line); font-size:13px; background:#fff;
+    font-family: inherit; color: var(--ink);
+  }
+  .coverage-list { font-size:12.5px; line-height:2; }
+
+  .accordion-item { border-top:1px solid var(--paper2); }
+  .accordion-item:first-child { border-top:none; }
+  .accordion-head { display:flex; justify-content:space-between; padding:10px 0; cursor:pointer; font-size:13px; font-weight:600; }
+
+  .tip-card { background: var(--paper2); border-radius:14px; padding:14px; margin-bottom:10px; }
+  .tip-card .tip-point { font-size:13.5px; font-weight:700; margin-bottom:6px; }
+  .tip-card .tip-conclusion { font-size:12.5px; margin-bottom:8px; }
+  .tip-card .tip-quote { font-style:italic; font-size:12.5px; border-left:3px solid var(--accent); padding-left:8px; margin-bottom:6px; }
+  .tip-card .tip-source { font-size:10.5px; color: var(--muted); }
+
+  .trouble-card { background: var(--paper2); border-radius:14px; padding:14px; margin-bottom:10px; }
+  .trouble-card .tr-title { font-size:14px; font-weight:700; margin-bottom:8px; }
+  .trouble-card .tr-step { font-size:12px; line-height:1.6; margin-bottom:4px; padding-left:14px; position:relative; }
+  .trouble-card .tr-step::before { content:'・'; position:absolute; left:0; color: var(--accent2); }
+
+  .backup-item { background: var(--paper2); border-radius:14px; padding:12px 14px; margin-bottom:8px; }
+  .backup-item .bi-name { font-size:13.5px; font-weight:700; }
+  .backup-item .bi-kr { font-size:11px; color: var(--muted); }
+  .backup-item .bi-hours { font-size:11px; color: var(--ok); font-weight:600; margin-top:3px; }
+  .backup-item .bi-note { font-size:11.5px; margin-top:3px; }
+
+  .toilet-badge { font-size:26px; text-align:center; margin: 6px 0; }
+  .toilet-word { text-align:center; font-size:20px; font-weight:700; margin-bottom:10px; }
+  .toilet-chip-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .toilet-chip { font-size:11.5px; background: var(--paper2); padding:6px 12px; border-radius:999px; }
+
+  .contact-btn {
+    width:100%; display:flex; justify-content:space-between; align-items:center;
+    background: var(--paper2); border:none; border-radius:14px; padding:14px 16px; margin-bottom:10px; cursor:pointer;
+  }
+  .contact-btn .cb-name { font-size:13.5px; font-weight:700; }
+  .contact-btn .cb-num { font-size:12px; color:var(--accent2); }
+  .contact-btn.big { background: var(--ng); }
+  .contact-btn.big .cb-name, .contact-btn.big .cb-num { color:#fff; }
+
+  .final-check-list .task-row { padding: 11px 0; }
+  .tomorrow-card { background: var(--ink); color: #fff; border-radius:16px; padding:16px; margin-top:16px; }
+  .tomorrow-card .tc-label { font-size:11px; opacity:0.7; letter-spacing:1px; }
+  .tomorrow-card .tc-flight { font-size:18px; font-weight:700; margin:4px 0; }
+
+  /* emergency floating button + modal */
+  .emergency-fab {
+    position:absolute; right:14px; top:14px; z-index:15; width:42px; height:42px; border-radius:50%;
+    background: var(--ng); color:#fff; border:none; font-size:18px; box-shadow:0 4px 10px rgba(196,67,43,0.4); cursor:pointer;
+  }
+  .emergency-overlay { position:absolute; inset:0; background: rgba(0,0,0,0.4); z-index:40; display:flex; align-items:flex-end; }
+  .emergency-card { background:#fff; width:100%; max-height:88%; overflow-y:auto; border-radius:24px 24px 0 0; padding:20px; }
+  .emergency-card h2 { color: var(--ng); font-size:20px; margin:0 0 4px; }
+  .em-step { background: #FDEDEA; border-radius:14px; padding:12px 14px; margin-bottom:10px; }
+  .em-step .es-num { font-size:10.5px; color: var(--ng); font-weight:700; }
+  .em-step .es-text { font-size:13px; margin-top:2px; line-height:1.6; }
+  .em-close { display:block; margin: 14px auto 0; background:none; border:none; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div id="tg-app"><div id="tg-main"></div></div>
+
+<script>
+(function(){
+  function naverUrl(k){ return 'https://map.naver.com/p/search/' + encodeURIComponent(k); }
+  function gmapsPlaceUrl(placeId){ return 'https://www.google.com/maps/place/?q=place_id:' + placeId; }
+  function gmapsDirUrl(lat,lng){ return 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=transit'; }
+  function loadLS(key, fallback){ try{ var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
+  function saveLS(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+
+  const ICONS = { transport:'🚇', pokemon:'🎮', food:'🍜', cafe:'☕', shopping:'🛍️', hotel:'🏨', sight:'🌉' };
+
+  /* ================= ITINERARY DATA (unchanged from before) ================= */
+  const PLACES = {
+    t3: { id:'t3', area:'仁川機場', kind:'transport', tag:'Transport', nameZh:'仁川國際機場 第1航廈', nameKr:'인천공항 제1터미널', nameRoman:'Incheon Airport Terminal 1',
+      addr:'인천광역시 중구 공항로 272 ／ 仁川広域市中区空港路272', hours:'24小時', nearestStation:'機場鐵路 AREX 인천공항1터미널역',
+      budget:'—', why:'旅程起訖點，抵達與離開都會經過', soloFriendly:'unsure',
+      lat:37.4475036, lng:126.4523967, placeId:'ChIJ9WkhZNCbezURm91nh0xUHZc', links:{}, cautions:'入境動線較長，預留充裕時間' },
+    t4: { id:'t4', area:'仁川機場', kind:'transport', tag:'Transport', nameZh:'LG U+ 機場漫遊中心', nameKr:'LG유플러스 로밍센터', nameRoman:'LG U+ Roaming Center T1',
+      addr:'인천광역시 중구 공항로 272, 1층（Gate F／Gate A附近）', hours:'24小時', nearestStation:'第1航廈入境大廳',
+      budget:'依方案而定', why:'抵達後第一件事：拿 eSIM QR＋CHECK iN SEOUL 卡', soloFriendly:'ok',
+      lat:37.4472405, lng:126.4501858, placeId:'ChIJWWgVO92bezUR420PT3F4f64', rating:'3.4★（54則）', links:{},
+      cautions:'現場常有排隊，Klook等預先購買可縮短等待' },
+    t5: { id:'t5', area:'仁川機場', kind:'pokemon', tag:'Pokémon', nameZh:'HiKR Station', nameKr:'하이커 스테이션', nameRoman:'HiKR Station',
+      addr:'인천광역시 중구 공항로 271, 국제선여객터미널 B1', hours:'10:00–19:00', nearestStation:'第1航廈 交通中心 B1',
+      budget:'免費入場', why:'落地就能玩 Pokémon GO＋蓋 Stamp Rally 第一章', soloFriendly:'ok',
+      lat:37.4476926, lng:126.4520939, placeId:'ChIJm-EhqwmbezURFRSGCxJBBx0', rating:'4.8★（229則）',
+      links:{ official:'https://english.visitkorea.or.kr/svc/sp/hikr' },
+      pokemon:{ entry:'免費入場，無需預約', queue:'現場自由進出', merch:'部分周邊販售，實際品項依現場為準', stampRally:'HiKR Stamp Rally 第一站', goEvent:'可同時進行 Pokémon GO 一般遊玩' },
+      cautions:'僅為官方文化空間常態設施，非限時活動' },
+    t2: { id:'t2', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'新設洞站', nameKr:'신설동역', nameRoman:'Sinseol-dong Station',
+      addr:'서울특별시 동대문구 신설동 일대', hours:'依地鐵營運時間', nearestStation:'1號線・2號線交會站',
+      budget:'—', why:'離飯店最近的地鐵站', soloFriendly:'ok', lat:37.575326, lng:127.024849, placeId:'ChIJpxEgjkyjfDURdE1D0-t8owY',
+      rating:'3.7★（14則）', links:{}, cautions:'站體較舊，出口指標稍複雜' },
+    t1: { id:'t1', area:'鐘路・清溪川', kind:'hotel', tag:'其他', nameZh:'HI STAY 종로 1233', nameKr:'하이스테이 종로 1233', nameRoman:'HI STAY Jongno 1233',
+      addr:'서울특별시 종로구 삼일대로17길 17（⚠️原始資料寫 보문로 15-1，入住前建議再核對一次）', hours:'Check-in 依訂房確認信',
+      nearestStation:'新設洞站 步行約5–8分鐘', budget:'依訂房', why:'本次住宿', soloFriendly:'ok',
+      lat:37.577088, lng:127.022941, placeId:'ChIJHbtS1yqjfDURtGcgLif08lA', rating:'2.5★（4則，樣本較少）', links:{},
+      cautions:'地址有兩個版本，強烈建議出發前跟訂房平台再核對一次' },
+    p3: { id:'p3', area:'鐘路・清溪川', kind:'pokemon', tag:'Pokémon', nameZh:'鐘路3街站', nameKr:'종로3가역', nameRoman:'Jongno 3-ga Station',
+      addr:'서울특별시 종로구 종로3가', hours:'依地鐵營運時間', nearestStation:'1・3・5號線交會站',
+      budget:'—', why:'第一天 Pokémon GO 主要區域', soloFriendly:'ok', lat:37.570436, lng:126.992148, placeId:'ChIJm4u5qeCifDURKoTCTVSt134',
+      rating:'4.0★（344則）', links:{}, cautions:'站體很大，出口多' },
+    p4: { id:'p4', area:'鐘路・清溪川', kind:'pokemon', tag:'Pokémon', nameZh:'鐘閣站', nameKr:'종각역', nameRoman:'Jonggak Station',
+      addr:'서울특별시 종로구 종로1가', hours:'依地鐵營運時間', nearestStation:'1號線', budget:'—', why:'連接清溪川與 HiKR 一帶',
+      soloFriendly:'ok', lat:37.570176, lng:126.983197, placeId:'ChIJH5QaI-mifDURothhidjpo8g', rating:'4.1★（220則）', links:{} },
+    p5: { id:'p5', area:'鐘路・清溪川', kind:'sight', tag:'其他', nameZh:'清溪川', nameKr:'청계천', nameRoman:'Cheonggyecheon',
+      addr:'서울특별시 종로구 청계천로 일대', hours:'24小時開放', nearestStation:'鐘閣站／鐘路3街站', budget:'免費',
+      why:'邊散步邊玩 Pokémon GO', soloFriendly:'ok', lat:37.5691015, lng:126.9786692, placeId:'ChIJIwCT4-yifDUR1E63iG76hr0',
+      rating:'4.6★（11,003則）', links:{} },
+    f1: { id:'f1', cuisine:'🥩 烤肉（韓牛豬）', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'益善洞牧場 鐘路本店', nameKr:'익선동목장 종로본점', nameRoman:'Iksundong Farm Jongno',
+      addr:'서울특별시 종로구 돈화문로 53', hours:'11:30–22:00（五六日至23:00）', nearestStation:'鐘路3街站 步行約8分鐘',
+      budget:'約₩20,000–35,000／人', why:'9/26 晚餐第一候補', soloFriendly:'unsure', cautions:'烤肉類多為每人1份起計價',
+      lat:37.5731645, lng:126.991134, placeId:'ChIJ592ssWujfDURt6cSkZ_e6n8', rating:'4.5★（322則）',
+      links:{ instagram:'https://www.instagram.com/iksun.farm' },
+      food:{ minOrder:'多為每人1份起，可依人數單點', recommendedDish:'伊比利黑豬（이베리코 흑돼지）', hasKiosk:true, hasForeignMenu:'菜單提供QR code，可切換4種語言' },
+      backups:['f4','cb1','cb2','cb3'] },
+    f4: { id:'f4', cuisine:'🍲 麵疙瘩・韓式麵食', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'鐘路手工麵疙瘩', nameKr:'종로수제비', nameRoman:'Jongno Sujebi',
+      addr:'서울특별시 종로구 종로 19', hours:'10:00–22:00（週日公休）', nearestStation:'鐘閣站 步行約3分鐘',
+      budget:'約₩10,000–15,000／人', why:'太累的安全備案，一人友善', soloFriendly:'ok', cautions:'週日公休',
+      lat:37.5706529, lng:126.979728, placeId:'ChIJCba-8-uifDUR_vZN20tdsf0', rating:'3.7★（49則）', links:{},
+      food:{ minOrder:'單人即可點餐', recommendedDish:'手工麵疙瘩、辣炒魷魚飯', hasKiosk:true, hasForeignMenu:'觸控點餐面板可選英文／日文／中文' },
+      japaneseReview:{ note:'原始文件中提及的日本旅客體驗摘要（一樓多為單人客、二樓多為多人團體；點餐面板可切換多語言），未附原始文章連結。' } },
+    p1: { id:'p1', area:'聖水', kind:'pokemon', tag:'Pokémon', nameZh:'MUSINSA MEGASTORE 聖水店', nameKr:'무신사 메가스토어 성수', nameRoman:'MUSINSA MEGASTORE Seongsu',
+      addr:'서울특별시 성동구 성수동2가 324-2', hours:'11:00–22:00', nearestStation:'聖水站 步行約6分鐘',
+      budget:'免費入場', why:'Pokopia 現場候位地點', soloFriendly:'ok', lat:37.5403057, lng:127.0559105, placeId:'ChIJJzi4omelfDURT44cr2s_sJM',
+      rating:'4.3★（46則）', links:{},
+      pokemon:{ entry:'免費入場，活動區可能需現場排隊', reservation:'目前未查到需事先預約的官方公告', queueMethod:'建議提早抵達，現場排隊',
+        merch:'周邊販售資訊請以官方IG／現場公告為準', stampRally:'依現場活動而定', goEvent:'建議出發前再確認官方公告' },
+      cautions:'⚠️Pokopia確切活動日期尚未查到官方逐字公告，出發前務必再查最新資訊' },
+    s1: { id:'s1', cuisine:'☕ 咖啡・輕食', area:'聖水', kind:'cafe', tag:'Cafe', nameZh:'CAFE FAR BEN', nameKr:'카페 파벤', nameRoman:'CAFE FAR BEN Seongsu',
+      addr:'서울특별시 성동구 성수이로 65', hours:'10:00–21:00', nearestStation:'聖水站 步行約7分鐘', budget:'約₩8,000–12,000',
+      why:'Pokopia 當天的午餐或休息點', soloFriendly:'ok', lat:37.5410195, lng:127.0555027, placeId:'ChIJcdtVPwClfDURKeFSpRgZRNQ',
+      rating:'4.7★（189則）', links:{}, japaneseReview:{ note:'原始文件提到日本旅客形容氣氛時尚、一人也好入內，未附原始文章連結。' } },
+    p2: { id:'p2', area:'鐘路・清溪川', kind:'pokemon', tag:'Pokémon', nameZh:'HiKR Ground', nameKr:'하이커 그라운드', nameRoman:'HiKR Ground',
+      addr:'서울특별시 중구 청계천로 40', hours:'週二至週日 10:00–20:00（週一公休）', nearestStation:'鐘閣站 5號出口 步行約220公尺',
+      budget:'免費入場', why:'官方確認：2026/9/18–10/11 整棟變身寶可夢主題空間', soloFriendly:'ok',
+      lat:37.5685891, lng:126.9818622, placeId:'ChIJ_xCS_d-jfDURgqxl66H3dd8', rating:'4.6★（1,119則）',
+      links:{ official:'https://english.visitkorea.or.kr/svc/sp/hikr' },
+      pokemon:{ eventDate:'2026年9月18日–10月11日（韓國觀光公社官方公告）', entry:'免費入場', reservation:'公開資訊未提及需預約',
+        queueMethod:'現場排隊入場即可', merch:'5樓設有快閃店', stampRally:'1–3樓為展示與拍照區，含皮卡丘穿韓服等主題造景',
+        goEvent:'與 Pokémon GO 遊戲內活動是否連動未提及，建議另查 pokemongo.com/ko/news' },
+      cautions:'資訊來源為媒體報導非官方一手公告，出發前建議再看HiKR官網確認', sourceUrl:'https://view.asiae.co.kr/en/article/2026083115100741327' },
+    m1: { id:'m1', cuisine:'🍲 牛骨湯', area:'明洞', kind:'food', tag:'Food', nameZh:'神仙雪濃湯 明洞店', nameKr:'신선설농탕 명동점', nameRoman:'Shinsun Seolnongtang Myeongdong',
+      addr:'서울특별시 중구 명동2가 2-2, 2층', hours:'8:00–21:00', nearestStation:'明洞站 步行約5分鐘', budget:'約₩12,000–18,000',
+      why:'一人旅安全牌', soloFriendly:'ok', lat:37.5637994, lng:126.9854142, placeId:'ChIJofQIDw6jfDURbL-Kml7xkVE',
+      rating:'4.4★（552則）', links:{ official:'https://www.shinsunseolnongtang.co.kr/' },
+      food:{ minOrder:'單人即可點餐', recommendedDish:'牛骨湯（설농탕）', hasKiosk:false, hasForeignMenu:'不確定' },
+      japaneseReview:{ note:'原始文件提到日本女生分享，形容店家對一人旅客很友善，未附原始文章連結。' }, backups:['m2','m3','cb4','cb5','cb6','cb7'] },
+    m2: { id:'m2', cuisine:'🍜 刀削麵・餃子', area:'明洞', kind:'food', tag:'Food', nameZh:'明洞餃子 本店', nameKr:'명동교자 본점', nameRoman:'Myeongdong Kyoja',
+      addr:'서울특별시 중구 명동10길 29', hours:'10:30–21:00', nearestStation:'明洞站 步行約4分鐘', budget:'約₩13,000–17,000',
+      why:'刀削麵・餃子備案', soloFriendly:'ok', lat:37.5610151, lng:126.9860829, placeId:'ChIJW7FBDfCifDURHTpisLbVUH0',
+      rating:'4.2★（14,767則）', links:{ official:'http://www.mdkj.co.kr/' },
+      food:{ minOrder:'單人即可點餐', recommendedDish:'刀削麵、餃子', hasKiosk:false, hasForeignMenu:'不確定' },
+      japaneseReview:{ note:'原始文件提到日本一人旅分享：入店報人數後幾乎同時被問點餐，未附原始文章連結。' },
+      source:'來源：Dcard「首爾獨旅美食分享」網友實測（店面大、一人用餐不用等位；點了刀切麵約₩11,000，內含4個韭菜餃子，缺點是一人吃不完沒辦法再加點一份餃子）：「自己一個人吃飯位置都超好找」', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951' },
+    m3: { id:'m3', cuisine:'🍙 飯捲・辣炒年糕', area:'明洞', kind:'food', tag:'Food', nameZh:'明花堂 明洞1號店', nameKr:'명화당 명동1호점', nameRoman:'Myeonghwadang Myeongdong',
+      addr:'서울특별시 중구 명동4길 30, 2층', hours:'9:00–22:00', nearestStation:'明洞站 步行約5分鐘', budget:'約₩5,000–10,000',
+      why:'想吃小吃的快速選項', soloFriendly:'ok', lat:37.5623695, lng:126.9838274, placeId:'ChIJp_94U_CifDURss9P0puJTWw',
+      rating:'4.3★（894則）', links:{}, food:{ minOrder:'單人即可點餐', recommendedDish:'紫菜飯捲、辣炒年糕', hasKiosk:false, hasForeignMenu:'不確定' } },
+    t3b: { id:'t3b', area:'仁川機場', kind:'transport', tag:'Transport', nameZh:'仁川國際機場 第1航廈（回程）', nameKr:'인천공항 제1터미널', nameRoman:'Incheon Airport Terminal 1',
+      addr:'인천광역시 중구 공항로 272', hours:'24小時', nearestStation:'機場鐵路 AREX', budget:'—', why:'退稅・最後採買・15:00班機',
+      soloFriendly:'unsure', lat:37.4475036, lng:126.4523967, placeId:'ChIJ9WkhZNCbezURm91nh0xUHZc', links:{} },
+    f2: { id:'f2', cuisine:'🥩 烤肉（豬橫膈膜）', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'미갈매기살', nameKr:'미갈매기살', nameRoman:'Mi Galmaegisal',
+      addr:'서울특별시 종로구 돈화문로11가길 7', hours:'16:00–22:30', nearestStation:'鐘路3街站 步行約6分鐘', budget:'約₩15,000–25,000',
+      why:'鐘路一人燒肉候補', soloFriendly:'unsure', lat:37.5729378, lng:126.9910631, placeId:'ChIJySYC0t2ifDURV4Nb65meEf4',
+      rating:'3.8★（687則）', links:{}, food:{ minOrder:'鐘路一帶烤肉店常見最低2人份', recommendedDish:'갈매기살', hasKiosk:false, hasForeignMenu:'不確定' },
+      japaneseReview:{ note:'原始文件提到日本女生「鐘路3街一人燒肉」實際分享，未附原始文章連結。' } },
+    f3: { id:'f3', cuisine:'🥩 烤肉（豬橫膈膜）', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'광주집', nameKr:'광주집', nameRoman:'Gwangjujip',
+      addr:'서울특별시 종로구 돈화문로11나길 3', hours:'15:00–24:00', nearestStation:'鐘路3街站 步行約6分鐘', budget:'約₩15,000–25,000',
+      why:'갈매기살有名店', soloFriendly:'unsure', lat:37.572981, lng:126.9909477, placeId:'ChIJuwB9zt2ifDUR2VxYvWwtyNA',
+      rating:'3.8★（342則）', links:{}, food:{ minOrder:'可能最低2人份，建議避開尖峰', recommendedDish:'갈매기살', hasKiosk:false, hasForeignMenu:'不確定' },
+      japaneseReview:{ note:'原始文件提到日本人一人燒肉分享，提及平日避開尖峰可自在選位，未附原始文章連結。' } },
+    d1: { id:'d1', cuisine:'🍙 飯捲・韓式簡餐', area:'東大門', kind:'food', tag:'Food', nameZh:'김가네 東大門DDP店', nameKr:'김가네 동대문디자인플라자점', nameRoman:'Gimgane DDP',
+      addr:'서울특별시 중구 을지로 281（DDP B2 D6號）', hours:'10:00–20:00', nearestStation:'東大門歷史文化公園站', budget:'約₩6,000–10,000',
+      why:'東大門一人備用快餐', soloFriendly:'ok', lat:37.5672896, lng:127.0096507, placeId:'ChIJnXdXhdqjfDURXM-wlIKw2xs',
+      rating:'4.7★（58則）', links:{ official:'https://naver.me/5jJHfIn0' },
+      food:{ minOrder:'單人即可點餐', recommendedDish:'紫菜飯捲、拌飯', hasKiosk:false, hasForeignMenu:'不確定' } },
+    c1: { id:'c1', cuisine:'☕ 咖啡・甜點', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'咖啡韓藥房', nameKr:'커피한약방', nameRoman:'Coffee Hanyakbang',
+      addr:'서울특별시 중구 삼일대로12길 16-6', hours:'10:00–22:00（週日至20:00）', nearestStation:'鐘閣站 步行約6分鐘', budget:'約₩7,000–10,000',
+      why:'乙支路復古咖啡', soloFriendly:'ok', lat:37.5665301, lng:126.9885936, placeId:'ChIJedlDzuWifDURBaOCaa5hkL4',
+      rating:'4.5★（2,398則）', links:{ official:'https://coffeehanyakbang.com/' } },
+    c2: { id:'c2', cuisine:'☕ 咖啡・鹽包', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'小夏鹽田 益善店', nameKr:'소하염전 익선', nameRoman:'Soha Salt Pond Ikseon',
+      addr:'서울특별시 종로구 수표로28길 21-5', hours:'9:00–20:30', nearestStation:'鐘路3街站 步行約8分鐘', budget:'約₩6,000–9,000',
+      why:'益善洞人氣鹽包咖啡廳', soloFriendly:'ok', lat:37.5730739, lng:126.9896949, placeId:'ChIJdawuLnGjfDURFoQHgAgusNI',
+      rating:'4.5★（1,312則）', links:{ instagram:'https://instagram.com/sohasaltpond' },
+      source:'來源：Dcard「首爾獨旅美食分享」網友實測（推薦鹽奶油拿鐵，杯緣抹鹽巴，鹹甜口感很特別，兩個鹽麵包＋一杯咖啡約₩13,000）', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      japaneseReview:{ note:'原始文件提到日本部落格大讚鹽包好吃，未附原始文章連結。' } },
+    c3: { id:'c3', cuisine:'☕ 咖啡', area:'東大門', kind:'cafe', tag:'Cafe', nameZh:'LUFT COFFEE', nameKr:'루프트커피', nameRoman:'LUFT COFFEE',
+      addr:'⚠️明洞分店地址未查證；已確認DDP分店：중구 쌍림동 192-2', hours:'DDP分店 9:00–18:00（週日公休）',
+      nearestStation:'DDP分店：東大門歷史文化公園站', budget:'約₩7,000–10,000', why:'日本部落格推薦的早起系咖啡廳', soloFriendly:'ok',
+      lat:37.563555, lng:127.0048312, placeId:'ChIJMW9PGACjfDURvA4-a4iZWzk', rating:'4.6★（26則，DDP分店數據）',
+      links:{ official:'http://www.luft.kr/' }, cautions:'⚠️這裡的地圖／評分是DDP分店，不是明洞分店',
+      japaneseReview:{ note:'原始文件提到日本部落格形容適合早起活動、店內寬敞，未附原始文章連結。' } },
+    c4: { id:'c4', cuisine:'☕ 咖啡・甜點', area:'明洞', kind:'cafe', tag:'Cafe', nameZh:'THE SPOT FABULOUS', nameKr:'더 스팟 패뷸러스', nameRoman:'THE SPOT FABULOUS',
+      addr:'서울특별시 중구 명동2길 22', hours:'約10:00–22:50（出發前建議用NAVER再確認當日營業時間）', nearestStation:'明洞站 步行約4分鐘', budget:'約₩8,000–13,000',
+      why:'⭐9/27很推薦：由舊大使館建築改造，60年近代建築，4米挑高＋復古洋館氛圍，甜點師出身法國藍帶；座位多、有吧台位，一人也好去。建議排在「HiKR→明洞購物→這裡喝咖啡→晚餐」的順序', soloFriendly:'ok', star:true,
+      lat:37.5623122, lng:126.9825782, placeId:'ChIJoeE1CvGifDUR3fKrNvUZGXU',
+      rating:'4.2★（1,233則）', links:{ instagram:'https://instagram.com/the_spot_fabulous_' }, cautions:'內用可能有低消規定；人多時現場評論常提到「氣氛好但人很多」',
+      source:'來源：Harper\'s BAZAAR Korea 報導（確認建築前身為大使館，經過再生建築改造）',
+      japaneseReview:{ note:'原始文件提到兩篇日本部落格：一篇形容「將舊大使館建築翻新的明洞復古咖啡廳」，另一篇提到「保留了舊大使館別館樣貌的古風咖啡廳」；也有分享提及座位多、吧台位適合一人前往。這兩篇文章的實際網址使用者提供時遺失（訊息裡的附件連結沒有正確傳遞），目前無法附上真正原文連結，如果之後補上網址我可以再更新。' } },
+    c5: { id:'c5', cuisine:'☕ 咖啡・甜點', area:'明洞', kind:'cafe', tag:'Cafe', nameZh:'카페코인 明洞店', nameKr:'카페코인 명동', nameRoman:'Cafe Coin',
+      addr:'서울특별시 중구 명동6길 10', hours:'約9:30–22:30', nearestStation:'明洞站 步行約5分鐘', budget:'約₩8,000–13,000',
+      why:'老派喫茶店氛圍', soloFriendly:'ok', lat:37.5628646, lng:126.9841442, placeId:'ChIJk00ySfCifDURS-iJGvInYg4',
+      rating:'4.4★（705則）', links:{}, japaneseReview:{ note:'原始文件提到日本人分享形容像喫茶店氛圍，未附原始文章連結。' } },
+
+    cf1: { id:'cf1', cuisine:'🥐 工廠風麵包咖啡', area:'聖水', kind:'cafe', tag:'Cafe', nameZh:'Cafe Onion 聖水店', nameKr:'카페 어니언 성수', nameRoman:'Cafe Onion Seongsu',
+      addr:'서울특별시 성동구 아차산로9길 8', hours:'週一至五8:00–22:00，週六日9:00–22:00', nearestStation:'聖水站 步行約10分鐘', budget:'約₩7,000–12,000',
+      why:'聖水最知名的工廠改造咖啡廳之一，老舊鐵工廠外觀刻意保留斑駁感，鹽麵包是招牌', soloFriendly:'ok',
+      lat:37.5447328, lng:127.0582091, placeId:'ChIJHb1ypJWkfDURb2d4XCjLluM', rating:'4.2★（3,501則）', links:{},
+      cautions:'⚠️人潮多、排隊點餐動線常被評論提到較混亂，尖峰時段建議避開' },
+    cf2: { id:'cf2', cuisine:'☕ 倉庫風烘豆咖啡', area:'聖水', kind:'cafe', tag:'Cafe', nameZh:'大林倉庫', nameKr:'대림창고', nameRoman:'Daelim Changgo',
+      addr:'서울특별시 성동구 성수이로 78', hours:'11:00–22:00', nearestStation:'聖水站 步行約10分鐘', budget:'約₩8,000–13,000',
+      why:'舊倉庫改造，挑高鐵件與紅磚結構是招牌拍照點，現場常有老闆親自烘豆', soloFriendly:'ok',
+      lat:37.5418384, lng:127.0564636, placeId:'ChIJi_M445OkfDURBV_ePY2qCHo', rating:'4.2★（2,869則）', links:{},
+      cautions:'⚠️評論提到店內音樂偏大聲，不算安靜' },
+    cf3: { id:'cf3', cuisine:'🏯 韓屋風咖啡', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'Hanok Langsom 益善店', nameKr:'한옥랑솜 익선', nameRoman:'Hanok Langsom Ikseon',
+      addr:'서울특별시 종로구 수표로28길 21-6', hours:'週一至五・日10:30–22:00，週六9:00–22:00', nearestStation:'鐘路3街站 步行約8分鐘', budget:'約₩9,000–14,000',
+      why:'益善洞韓屋改造咖啡廳，木質溫潤空間，離益善洞牧場（9/26晚餐）很近，順路好安排', soloFriendly:'ok',
+      lat:37.5731833, lng:126.9898614, placeId:'ChIJCy_xz76jfDURFeDXmvVijv8', rating:'4.6★（251則）', links:{},
+      cautions:'⚠️評論提到沒有WiFi、沒有插座，不適合久坐辦公' },
+    cf4: { id:'cf4', cuisine:'🚂 火車主題甜點', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'Nakwon（樂園）', nameKr:'낙원', nameRoman:'Nakwon',
+      addr:'서울특별시 종로구 수표로28길 33-5', hours:'11:00–22:00', nearestStation:'鐘路3街站 步行約8分鐘', budget:'約₩9,000–15,000',
+      why:'益善洞人氣甜點咖啡廳，用小火車輸送帶送蛋糕上桌很特別，抹茶起司蛋糕評價高', soloFriendly:'ok',
+      lat:37.5733648, lng:126.9900717, placeId:'ChIJv8pAfwyjfDURBQRZnfH9Y_E', rating:'4.5★（514則）', links:{} },
+    cf5: { id:'cf5', cuisine:'🥐 新開幕麵包坊', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'PaperCrane Bakery & Cafe', nameKr:'페이퍼크레인', nameRoman:'PaperCrane Bakery & Cafe',
+      addr:'서울특별시 중구 마른내로2길 14', hours:'8:30–22:00', nearestStation:'鐘路3街站 步行約6分鐘', budget:'約₩6,000–11,000',
+      why:'2026年初新開幕，評分很高，鹽麵包、印切米可頌評價都不錯，環境明亮悠閒', soloFriendly:'ok',
+      lat:37.5638644, lng:126.9921217, placeId:'ChIJARsxOpKjfDURkjbfOs9eneU', rating:'4.9★（423則）', links:{} },
+    cf6: { id:'cf6', cuisine:'☕ 精品咖啡・提拉米蘇', area:'明洞', kind:'cafe', tag:'Cafe', nameZh:'Leesar Coffee', nameKr:'리싸르커피', nameRoman:'Leesar Coffee',
+      addr:'서울특별시 중구 명동8가길 58', hours:'週一至五7:00–20:00，週六日8:00–20:00', nearestStation:'明洞站 步行約6分鐘', budget:'約₩6,000–10,000',
+      why:'明洞高評價精品咖啡廳，提拉米蘇跟濃縮咖啡系列評價都很好，離王妃家、明洞餃子都近', soloFriendly:'ok',
+      lat:37.5617414, lng:126.9882011, placeId:'ChIJRwKF4J2jfDURmTZRCG0yHGg', rating:'4.6★（290則）', links:{} },
+    cf7: { id:'cf7', cuisine:'☕ 復古隱藏咖啡', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'Euljibean', nameKr:'을지빈', nameRoman:'Euljibean',
+      addr:'서울특별시 중구 을지로14길 21', hours:'週一至五12:00–22:00，週六13:00–22:00（週日公休）', nearestStation:'鐘閣站／乙支路3街站 步行約10分鐘', budget:'約₩7,000–12,000',
+      why:'乙支路巷弄復古風咖啡廳，適合喜歡老件裝潢、想安靜坐一下看街景的人', soloFriendly:'ok',
+      lat:37.5651713, lng:126.9921849, placeId:'ChIJA_j28OOifDURDFo4Ae-Wf6Q', rating:'4.3★（120則）', links:{}, cautions:'⚠️週日公休' },
+    b1: { id:'b1', cuisine:'🍲 豬肉湯飯', area:'弘大方向（較遠）', kind:'food', tag:'Food', nameZh:'옥동식', nameKr:'옥동식', nameRoman:'Okdongsik Seogyo',
+      addr:'서울특별시 마포구 양화로7길 44-10', hours:'11:00–15:00, 17:00–22:00', nearestStation:'弘大方向，離主行程較遠', budget:'約₩12,000–15,000',
+      why:'口碑很好但位置偏遠', soloFriendly:'unsure', lat:37.5526513, lng:126.9145118, placeId:'ChIJyZixE7-8fDURJGg4PFNXcQk',
+      rating:'4.3★（1,316則）', links:{ instagram:'http://instagram.com/okdongsik' }, cautions:'⚠️離主行程較遠',
+      food:{ minOrder:'單人即可點餐', recommendedDish:'豬肉湯飯', hasKiosk:true, hasForeignMenu:'不確定' } },
+    b2: { id:'b2', cuisine:'🥬 菜包肉', area:'弘大方向（較遠）', kind:'food', tag:'Food', nameZh:'베가보쌈', nameKr:'베가보쌈', nameRoman:'Vega Napa Wraps (Bega Bossam)',
+      addr:'서울특별시 마포구 서교동 346-43', hours:'11:30–22:00', nearestStation:'弘大方向，離主行程較遠', budget:'約₩10,000',
+      why:'一人份菜包肉候補', soloFriendly:'unsure', lat:37.5554718, lng:126.9239791, placeId:'ChIJZ30WYb2ZfDURX7TmYnr_Rws',
+      rating:'4.5★（71則）', links:{}, cautions:'⚠️弘大方向，離主行程較遠',
+      food:{ minOrder:'單人套餐即可', recommendedDish:'菜包肉套餐', hasKiosk:false, hasForeignMenu:'不確定' } },
+    b3: { id:'b3', cuisine:'🥩 烤肉（個人套餐）', area:'明洞', kind:'food', tag:'Food', nameZh:'혼고집', nameKr:'혼고집', nameRoman:'Hongojib',
+      addr:'서울특별시 중구 명동3길 40', hours:'11:00–01:00', nearestStation:'明洞站 步行約5分鐘', budget:'約₩14,300起',
+      why:'每位獨立烤爐，專為一人設計', soloFriendly:'ok', lat:37.5655325, lng:126.9836681, placeId:'ChIJ0zY0YgCjfDURMdCFTOOcO8A',
+      rating:'4.9★（1,776則）', links:{ official:'https://hongojib.com/' },
+      food:{ minOrder:'個人套餐制', recommendedDish:'牛豬綜合套餐', hasKiosk:true, hasForeignMenu:'觸控點餐，語言請現場確認' } },
+    leg1: { id:'leg1', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'6002 機場巴士 → 新設洞', nameKr:'6002번 공항버스', nameRoman:'Airport Bus 6002',
+      addr:'仁川機場 → 新設洞一帶', hours:'依巴士時刻表', nearestStation:'—', budget:'約₩10,000–17,000', why:'機場到飯店最主要交通方式',
+      soloFriendly:'ok', transport:{ from:'인천공항 (T1)', to:'신설동역 부근', line:'6002號 機場巴士', estTime:'約70–100分鐘', note:'座位有限，建議先查詢即時時刻表' },
+      links:{ naver:naverUrl('6002번 공항버스') } },
+    leg2: { id:'leg2', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'地鐵：新設洞 → 鐘路3街', nameKr:'신설동역 → 종로3가역', nameRoman:'Subway: Sinseol-dong → Jongno 3-ga',
+      addr:'—', hours:'依地鐵營運時間', nearestStation:'—', budget:'約₩1,400起', why:'從飯店前往第一天Pokémon GO主區域', soloFriendly:'ok',
+      transport:{ from:'신설동역', to:'종로3가역', line:'1號線（不需轉乘）', estTime:'約2站，5–8分鐘', note:'確切月台請以站內看板為準' }, links:{}, lat:37.570436, lng:126.992148 },
+    leg3: { id:'leg3', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'地鐵：新設洞 → 聖水', nameKr:'신설동역 → 성수역', nameRoman:'Subway: Sinseol-dong → Seongsu',
+      addr:'—', hours:'依地鐵營運時間', nearestStation:'—', budget:'約₩1,400起', why:'前往Pokopia／Musinsa', soloFriendly:'ok',
+      transport:{ from:'신설동역', to:'성수역', line:'2號線', estTime:'約25–30分鐘', note:'兩站皆在2號線上' }, links:{}, lat:37.5403057, lng:127.0559105 },
+    leg4: { id:'leg4', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'地鐵：聖水 → HiKR Ground一帶', nameKr:'성수역 → 종각역／을지로입구역', nameRoman:'Subway: Seongsu → Jonggak/Euljiro area',
+      addr:'—', hours:'依地鐵營運時間', nearestStation:'—', budget:'約₩1,400起', why:'從聖水前往HiKR Ground', soloFriendly:'ok',
+      transport:{ from:'성수역', to:'종각역 或 을지로입구역', line:'2號線，可能需轉乘', estTime:'約20–25分鐘', note:'確切轉乘站請以路線規劃結果為準' }, links:{}, lat:37.5685891, lng:126.9818622 },
+    leg5: { id:'leg5', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'前往明洞', nameKr:'종각 일대 → 명동', nameRoman:'To Myeongdong',
+      addr:'—', hours:'依地鐵營運時間', nearestStation:'—', budget:'約₩1,400起', why:'HiKR Ground結束後前往明洞', soloFriendly:'ok',
+      transport:{ from:'종각역／을지로입구역 一帶', to:'명동역（4號線）', line:'可能需轉乘4號線，或步行15–20分鐘', estTime:'約10–20分鐘', note:'確切轉乘方式請以即時路線規劃為準' }, links:{}, lat:37.5637994, lng:126.9854142 },
+    leg6: { id:'leg6', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'6002 機場巴士 → 仁川機場', nameKr:'6002번 공항버스', nameRoman:'Airport Bus 6002 (return)',
+      addr:'新設洞一帶 → 仁川機場 T1', hours:'依巴士時刻表', nearestStation:'—', budget:'約₩10,000–17,000', why:'回程前往機場', soloFriendly:'ok',
+      transport:{ from:'신설동역 부근', to:'인천공항 (T1)', line:'6002號 機場巴士', estTime:'約70–100分鐘', note:'建議比預定登機時間提前至少4小時出發' }, links:{ naver:naverUrl('6002번 공항버스') } },
+
+    cb1: { id:'cb1', cuisine:'🍙 飯捲・韓式簡餐', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'김가네 김밥 鐘路3街店', nameKr:'김가네 김밥 종로3가', nameRoman:'Gimgane Kimbab Jongno 3-ga',
+      addr:'서울특별시 종로구 수표로 117', hours:'24小時營業', nearestStation:'鐘路3街站 步行約5分鐘', budget:'約₩5,000–8,000',
+      why:'中秋連假備案・24小時全天候營業，不怕店休', soloFriendly:'ok', lat:37.5717549, lng:126.9889682, placeId:'ChIJf66KgOeifDUR3xUQ6MMFzR0',
+      rating:'4.1★（105則）', links:{},
+      food:{ minOrder:'單人即可點餐', recommendedDish:'飯捲、烏龍麵、辣炒年糕', hasKiosk:false, hasForeignMenu:'部分有英文菜單' } },
+    cb2: { id:'cb2', cuisine:'🍗 炸雞', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'Kyochon Chicken 鐘路1號店', nameKr:'교촌치킨 종로1호점', nameRoman:'Kyochon Chicken Jongno 1',
+      addr:'서울특별시 종로구 종로12길 15', hours:'11:00–24:00', nearestStation:'鐘閣站 步行約3分鐘', budget:'約₩20,000–30,000',
+      why:'中秋連假備案・大型連鎖炸雞店', soloFriendly:'ok', lat:37.5692375, lng:126.9858820, placeId:'ChIJIzIOFySjfDURF8ImDr-x3LA',
+      rating:'4.1★（700則）', links:{},
+      food:{ minOrder:'單人可點半隻或小份套餐', recommendedDish:'蜂蜜醬油炸雞、辣味炸雞', hasKiosk:true, hasForeignMenu:'觸控點餐機有英文' } },
+    cb3: { id:'cb3', cuisine:'🍔 漢堡速食', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'Burger King 鐘路店', nameKr:'버거킹 종로점', nameRoman:'Burger King Jongno',
+      addr:'서울특별시 종로구 종로 94', hours:'9:00–24:00', nearestStation:'鐘路3街站 步行約3分鐘', budget:'約₩8,000–12,000',
+      why:'中秋連假備案・國際連鎖速食，全天候可用', soloFriendly:'ok', lat:37.5699047, lng:126.9880409, placeId:'ChIJC1-Os-eifDURUpJ3DXJOiBA',
+      rating:'3.9★（1,807則）', links:{},
+      food:{ minOrder:'單人即可點餐', recommendedDish:'華堡套餐', hasKiosk:true, hasForeignMenu:'觸控點餐機有英文' } },
+    cb4: { id:'cb4', cuisine:'🍔 漢堡速食', area:'明洞', kind:'food', tag:'Food', nameZh:"McDonald's 明洞店", nameKr:'맥도날드 명동점', nameRoman:"McDonald's Myeongdong",
+      addr:'서울특별시 중구 명동7길 8', hours:'6:00–24:00', nearestStation:'明洞站 步行約4分鐘', budget:'約₩7,000–11,000',
+      why:'中秋連假備案・大型分店，早餐也能吃', soloFriendly:'ok', lat:37.5641850, lng:126.9845205, placeId:'ChIJ2dv02O-ifDURr_mJyhANetk',
+      rating:'3.9★（2,146則）', links:{},
+      food:{ minOrder:'單人即可點餐', recommendedDish:'早餐鬆餅套餐、大麥克', hasKiosk:true, hasForeignMenu:'觸控點餐機有英文' } },
+    cb5: { id:'cb5', cuisine:'🍗 炸雞', area:'明洞', kind:'food', tag:'Food', nameZh:'Kyochon Chicken 市廳店', nameKr:'교촌치킨 서울시청점', nameRoman:'Kyochon Chicken City Hall',
+      addr:'서울특별시 중구 세종대로18길 6', hours:'11:00–1:00', nearestStation:'市廳站附近，明洞步行約10分鐘', budget:'約₩20,000–30,000',
+      why:'中秋連假備案・晚餐吃到很晚也不怕沒開', soloFriendly:'ok', lat:37.5637350, lng:126.9773483, placeId:'ChIJRX-L9dqjfDURQFZA4WqRcB0',
+      rating:'4.1★（417則）', links:{},
+      food:{ minOrder:'單人可點半隻或小份套餐', recommendedDish:'蜂蜜醬油炸雞', hasKiosk:true, hasForeignMenu:'觸控點餐機有英文' } },
+    cb6: { id:'cb6', cuisine:'🍙 飯捲・韓式簡餐', area:'明洞', kind:'food', tag:'Food', nameZh:'김밥천국 明洞店', nameKr:'김밥천국 명동점', nameRoman:'Gimbap Cheonguk Myeongdong',
+      addr:'서울특별시 중구 퇴계로 114-3', hours:'7:30–23:00（週六至15:00）', nearestStation:'明洞站4號出口旁', budget:'約₩5,000–8,000',
+      why:'中秋連假備案・平價連鎖飯捲店', soloFriendly:'ok', lat:37.5605163, lng:126.9844587, placeId:'ChIJI56m-76jfDURvPmtm_biq24',
+      rating:'4.1★（145則）', links:{}, cautions:'週六只營業到15:00，其餘日子照常',
+      food:{ minOrder:'單人即可點餐', recommendedDish:'飯捲、拌飯、豬排', hasKiosk:false, hasForeignMenu:'有英文菜單' } },
+    cb7: { id:'cb7', cuisine:'🏪 便利商店', area:'明洞', kind:'shopping', tag:'Transport', nameZh:'CU 便利商店（明洞站店）', nameKr:'CU 편의점', nameRoman:'CU Convenience Store',
+      addr:'서울특별시 중구 퇴계로 127', hours:'24小時', nearestStation:'明洞站出口附近', budget:'約₩2,000–6,000',
+      why:'全程保底選項・24小時全年無休，真的找不到吃的就靠它', soloFriendly:'ok', lat:37.5611499, lng:126.9858497, placeId:'ChIJMWcXMwCjfDURkPIOmwUv6pw',
+      rating:'4.3★（22則）', links:{} },
+
+    brk1: { id:'brk1', cuisine:'🍲 雪濃湯', area:'鐘路・清溪川', kind:'food', tag:'Food', nameZh:'百年雪濃湯 新設洞店', nameKr:'백년설렁탕 신설동점', nameRoman:'Baeknyeon Seolleongtang Sinseol-dong',
+      addr:'서울특별시 종로구 보문로 5, 1층', hours:'24小時營業', nearestStation:'新設洞站 11號出口樓上', budget:'約₩9,000–13,000',
+      why:'9/28早餐・離飯店最近的24小時湯飯店，一個人吃一碗剛剛好', soloFriendly:'ok', lat:37.5761357, lng:127.0230571, placeId:'ChIJrRpGP1-jfDUR8mahjIV87CU',
+      rating:'4.9★（10則，樣本較少）', links:{},
+      food:{ minOrder:'單人即可點餐', recommendedDish:'雪濃湯、燉牛肋排湯', hasKiosk:false, hasForeignMenu:'不確定' },
+      cautions:'⚠️店名跟你提供的「100년설렁탕」略有出入（查到的是「백년설렁탕」＝百年雪濃湯），但地址就在新設洞站11號出口樓上，跟你原本地址보문로很接近，應該是同一間或同性質的店，建議出發前用店名截圖再核對一次' },
+    cof1: { id:'cof1', cuisine:'☕ 咖啡・外帶', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'커피니 新設店', nameKr:'커피니 신설점', nameRoman:'Coffeenie Sinseol',
+      addr:'서울특별시 동대문구 신설동 89-20', hours:'週一至週四 9:00–22:00・週五至週日 10:00–21:00', nearestStation:'新設洞站附近', budget:'約₩3,000–5,000',
+      why:'9/28早上外帶咖啡首選', soloFriendly:'ok', lat:37.5767503, lng:127.0257289, placeId:'ChIJ1_U6zUyjfDURJMJkGgl2g9A',
+      rating:'3.6★（31則，評價偏中等）',
+      cautions:'⚠️查到的實際開店時間是9:00（不是你說的8:00），9:10抵達仍然來得及，但要注意不是全年每天都8點開；另外Google評論分數中等、有幾則負評提到咖啡口味普通，是離飯店最近的選擇，非最高品質保證',
+      links:{}, backups:['cof2'] },
+    cof2: { id:'cof2', cuisine:'☕ 咖啡・外帶', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'컴포즈커피 新設洞站店', nameKr:'컴포즈커피 신설동역점', nameRoman:'Compose Coffee Sinseol-dong Station',
+      addr:'서울특별시 동대문구 신설동 98-28', hours:'週一至週五 7:30–21:30・週六日 8:30–21:30', nearestStation:'新設洞站4號出口附近', budget:'約₩2,000–4,000',
+      why:'第一選擇沒開或人多時的外帶咖啡備案，開店時間比cof1更早', soloFriendly:'ok', lat:37.5761463, lng:127.0256085, placeId:'ChIJbX_X_TqjfDURtThtRXZk9xc',
+      rating:'資料樣本極少（僅1則評論），僅供參考', links:{} },
+    n_pack: { id:'n_pack', area:'鐘路・清溪川', kind:'hotel', tag:'Transport', nameZh:'走回飯店整理行李', nameKr:'하이스테이 종로', nameRoman:'Back to HI STAY',
+      addr:'서울특별시 종로구 삼일대로17길 17', hours:'—', nearestStation:'—', budget:'—',
+      why:'買完早餐咖啡後走回飯店，做最後整理、拿行李', soloFriendly:'ok', lat:37.577088, lng:127.022941, placeId:'ChIJHbtS1yqjfDURtGcgLif08lA', links:{} },
+
+    ts1: { id:'ts1', kind:'food', tag:'Food', cuisine:'🍗 蔘雞湯', area:'景福宮周邊（延伸推薦）', nameZh:'土俗村蔘雞湯', nameKr:'토속촌 삼계탕', nameRoman:'Tosokchon Samgyetang',
+      addr:'서울특별시 종로구 자하문로5길 5', hours:'10:00–22:00', nearestStation:'景福宮站 步行約5分鐘', budget:'約₩20,000／人',
+      why:'Dcard網友實測：翻桌快、店員會講中文、附辣蘿蔔泡菜，適合一人吃完整隻蔘雞湯', soloFriendly:'ok',
+      lat:37.5777786, lng:126.9715909, placeId:'ChIJb5OOGL6ifDURU29ID3t8aOA', rating:'4.2★（12,045則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      food:{ minOrder:'單人即可點一份完整蔘雞湯', recommendedDish:'原味蔘雞湯', hasKiosk:false, hasForeignMenu:'菜單有中文說明吃法' },
+      cautions:'不在主行程動線上，離鐘路約需另外安排時間前往' },
+    gj1: { id:'gj1', kind:'sight', tag:'Food', cuisine:'🍢 市場小吃', area:'鐘路・清溪川', nameZh:'廣藏市場', nameKr:'광장시장', nameRoman:'Gwangjang Market',
+      addr:'서울특별시 종로구 청계천로 88', hours:'9:00–22:30', nearestStation:'鐘路5街站 步行約2分鐘', budget:'約₩5,000–10,000／份小吃',
+      why:'Dcard網友推薦：糯米麻花、紅薯糯米甜甜圈、綠豆煎餅都很有名，一個人吃小吃攤最自由', soloFriendly:'ok',
+      lat:37.5700385, lng:126.9996038, placeId:'ChIJm3V0fu2ifDURRJ8IMUijVtY', rating:'4.2★（44,276則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      food:{ minOrder:'攤位小吃單人自由選購', recommendedDish:'糯米麻花、紅薯糯米甜甜圈、冷麵、綠豆煎餅', hasKiosk:false, hasForeignMenu:'部分攤位有英文/圖片菜單' } },
+    sb1: { id:'sb1', kind:'cafe', tag:'Cafe', cuisine:'🥐 麵包・早午餐', area:'聖水', nameZh:'Standard Bread', nameKr:'스탠다드 브레드', nameRoman:'Standard Bread Seongsu',
+      addr:'서울특별시 성동구 성수이로18길 37', hours:'9:00–21:00', nearestStation:'聖水站 步行約10分鐘', budget:'約₩15,000–25,000／人',
+      why:'Dcard網友推薦：庭園式早午餐，招牌烤布蕾法式吐司；可用Google地圖連結線上抽號碼牌，不需韓國門號', soloFriendly:'unsure',
+      lat:37.5416845, lng:127.0612531, placeId:'ChIJf5seGgClfDURTfd1UENPyV8', rating:'4.6★（1,749則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      cautions:'⚠️網友提醒份量偏大適合兩人分食，一個人吃建議不要加點濃湯，容易吃不完會膩',
+      food:{ minOrder:'單點麵包/吐司即可，套餐份量大', recommendedDish:'烤布蕾法式吐司', hasKiosk:false, hasForeignMenu:'不確定，可線上訂位免電話' } },
+    hk1: { id:'hk1', kind:'food', tag:'Food', cuisine:'🥢 中華料理（韓式）', area:'明洞', nameZh:'香港飯店0410', nameKr:'홍콩반점0410', nameRoman:'Hong Kong Banjeom 0410',
+      addr:'서울특별시 중구 명동10길 7-4', hours:'11:00–21:00', nearestStation:'明洞站 步行約5分鐘', budget:'約₩10,000–13,000／人',
+      why:'Dcard網友推薦：韓式中華連鎖，炸醬麵＋糖醋肉套餐份量足，一人單點很方便', soloFriendly:'ok',
+      lat:37.5633122, lng:126.9854033, placeId:'ChIJb0FxF_CifDURVw4IUDHyALs', rating:'4.0★（938則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      cautions:'入口不明顯，在建築物左側窄樓梯上2樓；要自己到櫃台點餐付款',
+      food:{ minOrder:'單人即可點套餐', recommendedDish:'炸醬麵、糖醋肉套餐', hasKiosk:false, hasForeignMenu:'有英文菜單，店員英文不錯' } },
+    wb1: { id:'wb1', kind:'food', tag:'Food', cuisine:'🥩 烤肉（韓牛）', area:'明洞', nameZh:'王妃家 明洞店', nameKr:'왕비집 명동본점', nameRoman:'Wangbijip Myeongdong',
+      addr:'서울특별시 중구 명동8가길 26', hours:'11:30–22:00', nearestStation:'明洞站 步行約6分鐘', budget:'約₩50,000起／人（韓牛單點價位較高）',
+      why:'Dcard網友實測：一個人也能吃到韓牛烤肉，店員會幫忙烤，單點韓牛里脊即可', soloFriendly:'ok',
+      lat:37.5617081, lng:126.9864459, placeId:'ChIJhwklg_qifDURQDLm0Ant2yQ', rating:'4.5★（4,372則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      cautions:'⚠️價位偏高，網友建議單點一份肉可能吃不飽，可以加點白飯或再加一份肉',
+      food:{ minOrder:'單人可單點一份肉（店家會幫忙烤）', recommendedDish:'韓牛里脊', hasKiosk:false, hasForeignMenu:'有會中文的店員' } },
+    sd1: { id:'sd1', kind:'sight', tag:'其他', activity:'🎈 熱氣球體驗', area:'汝矣島（額外景點，離主行程較遠）', nameZh:'SEOULDAL 首爾熱氣球', nameKr:'서울달', nameRoman:'SEOULDAL',
+      addr:'서울특별시 영등포구 여의공원로 68-1', hours:'週一至週五12:00–22:00，週六日10:00–22:00', nearestStation:'汝矣渡口/汝矣島公園站',
+      budget:'約₩20,000起（建議先在Klook等平台預約）', why:'Dcard網友推薦：固定式熱氣球升空約100公尺看漢江夜景，全程約10-15分鐘，有安全防護網',
+      soloFriendly:'unsure', lat:37.5260776, lng:126.9224830, placeId:'ChIJiwoNKgCffDUR1CJcpCyhOxQ', rating:'4.6★（99則）',
+      links:{}, source:'來源：Dcard「首爾獨旅美食分享」網友實測', sourceUrl:'https://www.dcard.tw/f/travel/p/259458951',
+      cautions:'⚠️位置在汝矣島，離鐘路／聖水／明洞主行程都有段距離，時間排不進去的話可以留到下次；會依天氣狀況停飛，建議提前預約場次' },
+
+    sbux1: { id:'sbux1', kind:'cafe', tag:'Cafe', cuisine:'☕ 咖啡（連鎖，插座多）', area:'鐘路・清溪川', charging:true, nameZh:'STARBUCKS 鐘路3街店', nameKr:'스타벅스 종로3가점', nameRoman:'Starbucks Jongno 3-ga',
+      addr:'서울특별시 종로구 종로 113-1', hours:'7:30–22:00（週日8:00–22:00）', nearestStation:'鐘路3街站 步行約2分鐘', budget:'約₩5,000–7,000／杯',
+      why:'共享行動電源租不到時的備案・連鎖咖啡廳插座相對多，適合坐下來充電', soloFriendly:'ok',
+      lat:37.5705527, lng:126.9902055, placeId:'ChIJ2w788NOjfDURehoMDRB99E4', rating:'3.7★（443則）', links:{},
+      cautions:'⚠️座位有限、樓梯較多，人多時插座可能被佔用，非100%保證有位子' },
+
+    khp1: { id:'khp1', kind:'shopping', tag:'Shopping', activity:'🛂 集章護照', isPassportFeature:true, shopCats:['首爾官方'], area:'仁川機場',
+      nameZh:'Korean Heritage Visitor Passport', nameKr:'코리아헤리티지 방문자여권', nameRoman:'Korean Heritage Visitor Passport',
+      addr:'인천공항 제1터미널 교통센터 B1 Korean Heritage Visitor Center', hours:'依機場中心開放時間', nearestStation:'第1航廈 交通中心 B1',
+      budget:'免費領取', why:'外國旅客文化遺產集章護照，在指定景點蓋章，集滿可兌換紀念品', soloFriendly:'ok',
+      routeBadge:'出發前再確認', recommendedBuy:'—', suitableFor:'喜歡蒐集紀念章、對韓國文化遺產有興趣的旅客', stayTime:'約10-15分鐘領取',
+      links:{ official:'https://kh.or.kr/visit', instagram:'https://instagram.com/visitkoreanheritage', youtube:'https://youtube.com/@koreanheritage' },
+      cautions:'⚠️這是韓國文化遺產廳（Korea Heritage Service）主辦的全國性活動，主要覆蓋全國76處文化遺產景點；仁川機場T1的Heritage Visitor Center本身就是一個據點，現場體驗集滿3個章即可換紀念品，數量有限、依現場公告為準',
+      passportTasks:['查看目前是否開放申請','如果可申請，完成事前申請或直接現場領取','保存申請/領取畫面','9/26 抵達T1後前往Heritage Visitor Center領取'] },
+
+    smSoul1: { id:'smSoul1', kind:'shopping', tag:'Shopping', cuisine:'🎁 首爾官方紀念品', shopCats:['首爾官方','Haechi','文具'], area:'鐘路・清溪川',
+      nameZh:'Seoul My Soul Shop（首爾旅遊廣場店）', nameKr:'서울마이소울샵 (서울관광플라자)', nameRoman:'Seoul My Soul Shop - Seoul Tourism Plaza',
+      addr:'서울특별시 종로구 청계천로 85 삼일빌딩 1층', hours:'9:00–18:00', nearestStation:'鐘閣站 步行約3分鐘', budget:'約₩5,000–20,000／件',
+      why:'首爾市官方紀念品店，Haechi周邊、首爾Logo小物、明信片、磁鐵都有，9/26鐘路行程順路', soloFriendly:'ok',
+      routeBadge:'9/26 順路', recommendedBuy:'Haechi玩偶／磁鐵、首爾地標明信片', suitableFor:'想帶「真的有首爾感」紀念品的人', stayTime:'約10-20分鐘',
+      lat:37.5686096, lng:126.9871491, placeId:'ChIJpw5BseOjfDURxj764avZUYo', rating:'4.7★（7則）',
+      sfLevel:5, links:{}, source:'來源：Google Maps旅客評論摘要（非台灣/日本特定來源，誠實標註）' },
+    smSoul2: { id:'smSoul2', kind:'shopping', tag:'Shopping', cuisine:'🎁 首爾官方紀念品', shopCats:['首爾官方','Haechi','文具'], area:'明洞',
+      nameZh:'Seoul My Soul Shop（明洞旅遊服務中心店）', nameKr:'서울마이소울샵 (명동관광안내소)', nameRoman:'Seoul My Soul Shop - Myeongdong',
+      addr:'서울특별시 중구 을지로 66 하나금융그룹 명동사옥 별관 1층', hours:'9:00–18:00', nearestStation:'明洞站 步行約3分鐘', budget:'約₩5,000–20,000／件',
+      why:'明洞購物順路可以最後補首爾限定紀念品，也是遊客中心，可以順便問問題、借行動電源', soloFriendly:'ok',
+      routeBadge:'9/27 順路', recommendedBuy:'Haechi周邊、首爾限定明信片', suitableFor:'明洞逛街最後一站補紀念品', stayTime:'約10-20分鐘',
+      lat:37.5652696, lng:126.9849526, placeId:'ChIJWWxQL0ajfDUReGmX3jshdmY', rating:'5.0★（45則）',
+      sfLevel:5, links:{}, source:'來源：Google Maps旅客評論摘要（提及可免費借行動電源、店員英文流利，非台灣/日本特定來源）' },
+
+    oimu1: { id:'oimu1', kind:'shopping', tag:'Shopping', cuisine:'✏️ 設計文具・生活雜貨', shopCats:['韓國設計','文具'], area:'鐘路・清溪川',
+      nameZh:'OIMU 北村店', nameKr:'오이뮤 북촌', nameRoman:'OIMU Bukchon',
+      addr:'서울특별시 종로구 윤보선길 65', hours:'11:00–19:30', nearestStation:'安國站 步行約3分鐘', budget:'約₩5,000–30,000／件',
+      why:'韓國設計品牌，紙品／文具／香氛／生活器物，適合喜歡簡約設計雜貨的人；不在3天主行程動線上，需另外安排', soloFriendly:'ok',
+      routeBadge:'需要特別去', recommendedBuy:'設計信封組、香氛蠟燭', suitableFor:'喜歡簡約韓國設計感的人', stayTime:'約20-30分鐘',
+      lat:37.5788612, lng:126.9830780, placeId:'ChIJdzqxE6qjfDURu9-W5hCyP4U', rating:'5.0★（277則）',
+      sfLevel:4, links:{}, cautions:'⚠️離鐘路3街主行程約需步行15-20分鐘或轉乘，不在現有動線上',
+      source:'來源：Google Maps旅客評論摘要（形容店員親切、位於北村韓屋村角落，非台灣/日本特定來源）' },
+
+    kk1: { id:'kk1', kind:'shopping', tag:'Shopping', cuisine:'🐱 插畫・可愛雜貨', shopCats:['可愛雜貨','文具'], area:'鐘路・清溪川',
+      nameZh:'콩콩이 그림가게（插畫小店）', nameKr:'콩콩이 그림가게', nameRoman:'Kongkongi Illustration Shop',
+      addr:'서울특별시 종로구 인사동16길 5', hours:'12:00–18:00（週二週五至17:00）', nearestStation:'鐘閣站／安國站 步行約10分鐘', budget:'約₩3,000–15,000／件',
+      why:'仁寺洞巷弄裡的插畫小店，貓咪主題手繪商品可愛度很高，適合喜歡插畫雜貨的人', soloFriendly:'ok',
+      routeBadge:'繞路5–10分鐘', recommendedBuy:'貓咪插畫貼紙、明信片、小卡', suitableFor:'愛貓人士、喜歡手繪插畫風格的人', stayTime:'約10-15分鐘',
+      lat:37.575024, lng:126.984065, placeId:'ChIJE9ZfkYWjfDURAnRb_VOudDw', rating:'4.9★（13則）',
+      sfLevel:3, links:{}, source:'來源：Google Maps旅客評論摘要（提及會附贈配色貼紙，非台灣/日本特定來源）' },
+    kns1: { id:'kns1', kind:'shopping', tag:'Shopping', cuisine:'🏺 傳統工藝紀念品', shopCats:['傳統工藝'], area:'鐘路・清溪川',
+      nameZh:'Korean National Souvenir Center', nameKr:'한국민예관광센터', nameRoman:'Korean National Souvenir Center',
+      addr:'서울특별시 종로구 인사동5길 14', hours:'10:00–18:00（週日公休）', nearestStation:'鐘閣站／安國站 步行約10分鐘', budget:'約₩10,000–50,000／件（手工藝品價位較高）',
+      why:'仁寺洞傳統工藝紀念品店，品項齊全，適合一次挑齊傳統風格伴手禮', soloFriendly:'ok',
+      routeBadge:'繞路5–10分鐘', recommendedBuy:'螺鈿工藝小物、傳統紋樣小飾品', suitableFor:'想要正式一點傳統工藝伴手禮的人', stayTime:'約20-30分鐘',
+      lat:37.5726887, lng:126.9853425, placeId:'ChIJUYIEHOiifDURnVlR0XltKGU', rating:'4.4★（24則）',
+      sfLevel:4, links:{}, cautions:'⚠️價位偏高，網友評論提到部分商品是手工製作因此較貴',
+      source:'來源：Google Maps旅客評論摘要（提及店員會協助說明商品意義、適合當作逛街起點，非台灣/日本特定來源）' },
+
+    oy1: { id:'oy1', kind:'shopping', tag:'Shopping', cuisine:'💄 美妝旗艦店', shopCats:['Olive Young'], area:'聖水',
+      nameZh:'Olive Young N 聖水旗艦店', nameKr:'올리브영 N 성수', nameRoman:'Olive Young N Seongsu',
+      addr:'서울특별시 성동구 연무장7길 13', hours:'10:00–22:00', nearestStation:'聖水站 步行約8分鐘', budget:'依購買品項',
+      why:'大型旗艦店，2026年曾與Pokémon Mega Festa聯名，適合9/27在聖水順路補貨；有肌膚檢測體驗區', soloFriendly:'ok',
+      routeBadge:'9/27 順路', recommendedBuy:'熱門韓國保養品、Pokémon聯名商品（如有）', suitableFor:'想一次補齊韓妝的人', stayTime:'約30-60分鐘',
+      lat:37.5441151, lng:127.0545560, placeId:'ChIJ14znQAClfDURT1IQuqyAwlA', rating:'4.3★（569則）',
+      sfLevel:2, links:{}, cautions:'⚠️Pokémon聯名商品庫存需當天現場確認，不保證一定有貨；肌膚檢測體驗常常開店前就額滿，建議提早到',
+      source:'來源：Google Maps旅客評論摘要（明確提到Pokémon Mega Festa聯名與肌膚檢測體驗，非台灣/日本特定來源）',
+      food:null },
+    oy2: { id:'oy2', kind:'shopping', tag:'Shopping', cuisine:'💄 美妝大型店', shopCats:['Olive Young'], area:'明洞',
+      nameZh:'Olive Young 明洞Town店', nameKr:'올리브영 명동타운', nameRoman:'Olive Young Myeongdong Town',
+      addr:'서울특별시 중구 명동길 53', hours:'10:00–22:30', nearestStation:'明洞站 步行約3分鐘', budget:'依購買品項',
+      why:'明洞旗艦大店，兩層樓品項齊全，適合9/27明洞逛街最後補貨、辦退稅', soloFriendly:'ok',
+      routeBadge:'9/27 順路', recommendedBuy:'保養品、面膜、彩妝', suitableFor:'明洞逛街最後補貨、退稅', stayTime:'約30-45分鐘',
+      lat:37.563946, lng:126.9851624, placeId:'ChIJ9XDV4O-ifDURKjI94KEc1h4', rating:'4.3★（3,560則）',
+      sfLevel:2, links:{}, source:'來源：Google Maps旅客評論摘要（提及可現場辦理退稅，非台灣/日本特定來源）' },
+  };
+
+  const DAYS = [
+    { key:'day1', date:'9/26（六）', title:'抵達＋機場 Pokémon＋鐘路', desc:'11:30抵達仁川，先蓋Pokémon Stamp，再進城入住，晚上鐘路散步吃燒肉。', tags:['Transport','Pokémon','Food'],
+      stops: [ {ref:'t3', time:'11:30'}, {ref:'t4', time:'11:45'}, {ref:'t5', time:'12:15'}, {ref:'leg1', time:'13:00'}, {ref:'t2', time:'14:30'},
+        {ref:'t1', time:'15:00'}, {ref:'leg2', time:'16:30'}, {ref:'p3', time:'17:00'}, {ref:'p4', time:'17:30'}, {ref:'p5', time:'18:00'}, {ref:'f1', time:'19:00'} ],
+      endNote:'🏨 晚上回新設洞飯店休息' },
+    { key:'day2', date:'9/27（日）', title:'聖水 Pokopia＋HiKR＋明洞', desc:'白天在聖水追Pokopia，下午HiKR Ground整棟寶可夢主題空間，晚上明洞購物吃飯。', tags:['Pokémon','Food','Shopping','Cafe'],
+      stops: [ {ref:'leg3', time:'早上'}, {ref:'p1', time:'11:00'}, {ref:'s1', time:'13:00'}, {ref:'leg4', time:'14:00'}, {ref:'p2', time:'14:30'},
+        {ref:'leg5', time:'17:30'}, {ref:'m1', time:'19:00'} ], endNote:'☕ 有體力的話推薦 THE SPOT FABULOUS（舊大使館建築改造，明洞咖啡廳），沒有就直接回飯店' },
+    { key:'day3', date:'9/28（一）', title:'早上補買＋仁川機場', desc:'新設洞早餐、外帶咖啡，回飯店拿行李後前往機場退稅，15:00飛機回日本。', tags:['Food','Transport'],
+      stops: [ {ref:'brk1', time:'08:30'}, {ref:'cof1', time:'09:10'}, {ref:'n_pack', time:'09:20–09:30'}, {ref:'leg6', time:'10:15–10:30'}, {ref:'t3b', time:'12:00'} ], endNote:'✈️ 15:00 班機起飛，回日本' }
+  ];
+
+  const PLACES_FILTERS = ['全部','寶可夢','吃飯','咖啡','購物'];
+  const FILTER_TAG_MAP = {'寶可夢':'Pokémon','吃飯':'Food','咖啡':'Cafe','購物':'Shopping'};
+  const SHOP_SUBFILTERS = ['全部','首爾官方','Haechi','文具','可愛雜貨','韓國設計','傳統工藝','Pokémon Goods','Olive Young','公司伴手禮'];
+  const COMPANY_GIFTS = [
+    { name:'蜂蜜奶油杏仁', kr:'허니버터아몬드', note:'獨立小包裝，甜鹹口味辦公室接受度高', pack:'小包裝，適合拆開分送', where:'市區超市／機場均有賣', servings:'1包約可分3-4人' },
+    { name:'香蕉牛奶造型商品', kr:'바나나맛우유', note:'韓國經典造型，識別度高，適合當話題伴手禮', pack:'單瓶包裝', where:'便利商店、超市', servings:'1人1瓶' },
+    { name:'人蔘糖／人蔘茶包', kr:'인삼사탕', note:'耐放不易壞，韓國感十足', pack:'盒裝內獨立小包', where:'機場免稅店、市區超市', servings:'可分裝10人以上' },
+    { name:'Market O 布朗尼', kr:'마켓오 리얼브라우니', note:'知名度高、包裝精美，送禮體面', pack:'盒裝內獨立小包', where:'超市、機場', servings:'一盒約6-8人分' }
+  ];
+
+  const SOURCES = {
+    official: [
+      { name:'Korean Heritage Visitor Passport 官方網站', url:'https://kh.or.kr/visit' },
+      { name:'Korean Heritage 官方Instagram', url:'https://instagram.com/visitkoreanheritage' },
+      { name:'Korean Heritage 官方YouTube', url:'https://youtube.com/@koreanheritage' },
+      { name:'Dcard「首爾獨旅 美食分享」網友實測（cdy415）', url:'https://www.dcard.tw/f/travel/p/259458951' },
+      { name:'HiKR Ground（韓國觀光公社官方英文介紹）', url:'https://english.visitkorea.or.kr/svc/sp/hikr' },
+      { name:'HiKR Ground 化身寶可夢主題空間報導（Asia Economy, 2026/8/31）', url:'https://view.asiae.co.kr/en/article/2026083115100741327' },
+      { name:'Pokémon GO 官方新聞（韓文）', url:'https://pokemongo.com/ko/news' },
+      { name:'神仙雪濃湯 官網', url:'https://www.shinsunseolnongtang.co.kr/' },
+      { name:'明洞餃子 官網', url:'http://www.mdkj.co.kr/' },
+      { name:'咖啡韓藥房 官網', url:'https://coffeehanyakbang.com/' },
+      { name:'LUFT COFFEE 官網', url:'http://www.luft.kr/' },
+      { name:'Hongojib 官網', url:'https://hongojib.com/' },
+      { name:'益善洞牧場 Instagram', url:'https://www.instagram.com/iksun.farm' },
+      { name:'小夏鹽田 Instagram', url:'https://instagram.com/sohasaltpond' },
+      { name:'THE SPOT FABULOUS Instagram', url:'https://instagram.com/the_spot_fabulous_' },
+      { name:'Okdongsik Instagram', url:'http://instagram.com/okdongsik' },
+      { name:'김가네 DDP店 NAVER官方頁', url:'https://naver.me/5jJHfIn0' },
+      { name:'駐韓國台北代表部（中華民國外交部領事事務局）', url:'https://www.boca.gov.tw/sp-foof-countrycp-02-1-6256a-1.html' }
+    ],
+    youtube: [
+      { name:'Pokémon GO Korea（官方YouTube）', handle:'@Pokemongoliveko' },
+      { name:'Pokémon Korea, Inc.（포켓몬 공식 채널）', handle:'@PokemonKoreaInc' }
+    ],
+    unverified: [
+      '종로수제비 一人友善經驗分享', 'Mi Galmaegisal 鐘路一人燒肉分享', 'Gwangjujip 一人燒肉分享',
+      'CAFE FAR BEN 一人咖啡廳分享', '神仙雪濃湯 一人旅友善分享', '明洞餃子 點餐流程分享',
+      '小夏鹽田 鹽包推薦文', 'LUFT COFFEE 早起咖啡廳分享', 'THE SPOT FABULOUS 明洞一人咖啡廳專題', 'Cafe Coin 喫茶店氛圍分享'
+    ]
+  };
+
+  /* ================= PREP DATA ================= */
+  const PREP_TASKS_DEFAULT = {}; // id -> 'todo' | 'doing' | 'done'
+
+  const PREP_SECTIONS = [
+    { id:'net', title:'出發前要完成的事', en:'Pre-trip Tasks', type:'tasks', groups:[
+      { label:'LG U+ eSIM', tasks:[
+        {id:'esim1', label:'已購買', done0:true},
+        {id:'esim2', label:'把購買確認信截圖存到手機'},
+        {id:'esim3', label:'把預約 Email 存成離線檔案'},
+        {id:'esim4', label:'9/26 在仁川機場 T1 領取 eSIM QR code', dateBadge:'9/26 當天'},
+        {id:'esim5', label:'領取 CHECK iN SEOUL 卡', dateBadge:'9/26 當天'},
+        {id:'esim6', label:'啟用 eSIM'},
+        {id:'esim7', label:'離開機場前測試行動網路是否正常'}
+      ]},
+      { label:'NAVER Map', tasks:[
+        {id:'naver1', label:'安裝 NAVER Map'},
+        {id:'naver2', label:'建立 NAVER 帳號'},
+        {id:'naver3', label:'提交登入限制解除申請'},
+        {id:'naver4', label:'等待帳號恢復'},
+        {id:'naver5', label:'建立「Seoul 2026」收藏清單'},
+        {id:'naver6', label:'把旅行地點加入收藏'}
+      ]},
+      { label:'其他 App', tasks:[
+        {id:'app1', label:'安裝 KakaoMap'},
+        {id:'app2', label:'安裝 Papago'},
+        {id:'app3', label:'安裝 CHECK iN SEOUL'},
+        {id:'app4', label:'登入 Trip.com'},
+        {id:'app5', label:'登入 Pokémon GO'},
+        {id:'app6', label:'安裝 Google Maps 當備用'}
+      ]}
+    ]},
+    { id:'entry', title:'韓國入境手續', en:'Entry Procedures', type:'tasks', groups:[
+      { label:'Korea e-Arrival Card', dateBadge:'9/23 起可辦理', tasks:[
+        {id:'ea1', label:'準備護照'}, {id:'ea2', label:'準備 TW250 航班資訊'}, {id:'ea3', label:'準備飯店韓文地址'},
+        {id:'ea4', label:'填寫 Korea e-Arrival Card', dateBadge:'9/23起'}, {id:'ea5', label:'提交完成後保存截圖'}
+      ]}
+    ], infoNote:'⚠️只使用韓國政府官方網站，官方申報不收費。', extraCard:{
+        title:'K-ETA', body:'目前安排：不另外申請，改填 e-Arrival Card', recheck:'出發前 7 天再確認'
+      } },
+    { id:'flight', title:'機票與住宿', en:'Flight & Hotel', type:'flighthotel',
+      flights:[
+        { code:'TW250', route:'NRT → ICN', time:'9/26 08:40 → 11:30' },
+        { code:'TW245', route:'ICN → NRT', time:'9/28 15:00 → 17:40' }
+      ],
+      flightTasks:[
+        {id:'fl1', label:'把 Trip.com 訂單截圖存到手機'}, {id:'fl2', label:'保存航班號碼'}, {id:'fl3', label:'保存航廈資訊'},
+        {id:'fl4', label:'保存托運／手提行李規定'}, {id:'fl5', label:'按航空公司規定準備行動電源'}, {id:'fl6', label:'出發前下載登機資訊'}
+      ],
+      hotel:{ name:'CLOUD STAY Hotel JONGNO', altName:'舊名稱／NAVER搜尋用：HI STAY Jongno 1233' },
+      hotelTasks:[
+        {id:'ho1', label:'保存住宿訂單'}, {id:'ho2', label:'保存飯店韓文地址'}, {id:'ho3', label:'保存飯店電話'},
+        {id:'ho4', label:'保存飯店位置截圖'}, {id:'ho5', label:'保存舊名稱方便 NAVER 搜尋'}
+      ] },
+    { id:'insurance', title:'旅行保險', en:'Travel Insurance', type:'insurance',
+      coverage:['傷害醫療','疾病醫療','個人賠償','行李損失','救援／緊急支援'],
+      tasks:[
+        {id:'in1', label:'找出 TW250 是刷哪張卡'}, {id:'in2', label:'找出 TW245 是刷哪張卡'}, {id:'in3', label:'查看信用卡官方保險啟動條件'},
+        {id:'in4', label:'保存保險保障內容截圖'}, {id:'in5', label:'保存日文緊急支援電話'}, {id:'in6', label:'決定是否需要另外買旅平險'}
+      ] },
+    { id:'packing', title:'行李清單', en:'Packing List', type:'accordion', groups:[
+      { label:'證件與金錢', items:['護照','機票訂單','飯店訂單','主要信用卡','備用信用卡','少量韓元現金'] },
+      { label:'盥洗用品', note:'韓國住宿不一定免費提供牙刷與牙膏，建議自行攜帶。', items:['牙刷','牙膏','洗面乳','保養品','卸妝用品','梳子','隱形眼鏡用品'] },
+      { label:'外出小包', items:['可溶於水的袖珍衛生紙','濕紙巾','小垃圾袋','行動電源（充飽・接點絕緣）','充電線','韓國轉接頭','小Ziplock夾鏈袋 2～3個','摺疊購物袋（Eco bag）','雨具','少量現金','飯店韓文地址截圖'] },
+      { label:'衣物', items:['薄外套或薄罩衫（室內冷氣偏強）'] },
+      { label:'常備藥', items:['止痛藥','腸胃藥','OK 繃','自己平常服用的藥','口罩','生理用品'] },
+      { label:'Pokémon', items:['Pokémon GO','行動電源','Pokémon 活動頁截圖','ヌオー'] }
+    ]},
+    { id:'solo', title:'獨旅實用提醒', en:'Solo Travel Tips', type:'tips',
+      tipGroups:[
+        { label:'必帶', tips:[
+          { point:'袖珍衛生紙（可溶於水）', conclusion:'外出包固定放1包；飯店房間未必有面紙，廁所臨時沒紙時也能救急。帶2～3包備用。',
+            quote:'「ホテルの部屋に備え付けのティッシュが無かったので持って行って良かったです。」', source:'日本旅客部落格分享（原文網址未提供）' },
+          { point:'濕紙巾', conclusion:'鐘路燒肉、市場小吃都用得到；吃飯前擦手、擦桌面、手沾到醬汁時很方便。外出包固定放1包。',
+            quote:'「飲食店で日本のようにおしぼりは出てこないので、あると便利だった。」', source:'日本旅客部落格分享（原文網址未提供）' },
+          { point:'牙刷＋牙膏', conclusion:'不要預設飯店會提供，尤其是這次訂的個人房型，帶旅行組最保險。',
+            quote:'「歯ブラシは絶対に持参しましょう！」', source:'日本旅客部落格分享（原文網址未提供）' },
+          { point:'腸胃藥', conclusion:'韓式燒肉＋辣食＋咖啡因＋旅行作息改變，腸胃負擔會比平常大，建議放進隨身藥包。另外也一起帶止痛藥、OK繃、生理用品、自己平常吃的藥。',
+            quote:'「胃薬！！！(辛いもの多いので必須)」', source:'日本旅客部落格分享（原文網址未提供）' },
+          { point:'行動電源（注意細節，不是帶了就好）', conclusion:'出發前充飽電、容量標示清楚可辨識、接點做好絕緣、放隨身行李不要托運、下機前不要留在頭頂置物櫃——近期航空公司對行動電源的機上保管規定普遍變嚴，這幾點都要注意。' },
+          { point:'韓國轉接頭', conclusion:'已查證：韓國電壓220V／60Hz，插座是Type C或Type F（圓孔），跟日本Type A（扁平雙腳）不同，插頭形狀對不上，一定要帶。手機／行動電源／筆電充電器大多是寬電壓（充電器上會標INPUT: 100-240V），有轉接頭就能充，不需要額外變壓器；只有吹風機、離子夾這類會發熱的電器才需要變壓器。真的忘記帶，韓國便利商店（CU、GS25）、明洞電子街、龍山電子商場都買得到，只是比台灣貴。' }
+        ]},
+        { label:'帶了會方便', tips:[
+          { point:'小Ziplock夾鏈袋 2～3個', conclusion:'化妝品防漏、裝小垃圾、濕掉的東西、Pokémon周邊小物都能用，去活動現場時特別方便。' },
+          { point:'摺疊購物袋（Eco bag）', conclusion:'韓國購物袋大多要另外付費，這趟又會去Pokopia、Olive Young、HiKR商店，帶一個環保袋比較划算。' },
+          { point:'薄外套或薄罩衫', conclusion:'9月底戶外可能還暖，但百貨公司、咖啡廳冷氣通常偏強，帶一件摺疊式薄外套最保險，不占行李空間。',
+            quote:'「店内が結構寒いので、折りたためるうっすいものを持っていくのが正解。」', source:'日本旅客部落格分享（原文網址未提供）' },
+          { point:'重要資料先做離線備份', conclusion:'手機裡先存好機票、飯店訂單、保險資料、護照照片、LG U+資訊、代表部聯絡方式，比多帶一件衣服更重要——詳細清單見下面「離線備份」區塊。' }
+        ]},
+        { label:'可以在韓國補買', tips:[
+          { point:'一般洗髮用品／生活雜貨／部分化妝品', conclusion:'便利商店、Olive Young、大型超市都買得到，行李可以留空間給紀念品。' }
+        ]},
+        { label:'用餐提醒', tips:[
+          { point:'現金與Kiosk並用', conclusion:'很多店家用觸控點餐機，但小吃攤、市場還是現金為主，建議隨身帶少量現金。' },
+          { point:'一人烤肉先查最低點餐', conclusion:'鐘路一帶部分烤肉店最低要點2人份，出發前可先看這份攻略裡每間店詳細頁的「最低點餐」欄位。' }
+        ]}
+      ] },
+    { id:'trouble', title:'獨旅應變', en:'Solo Troubleshooting', type:'trouble', scenarios:[
+      { icon:'🧭', title:'迷路了', steps:[
+        '優先用 NAVER Map 或 KakaoMap 走路導航，比 Google Maps 在韓國準確很多。',
+        '把目的地的韓文地址截圖存好，迷路時直接給店員或路人看，比開口問路快。',
+        '地鐵站都有編號（例如鐘路3街站329/145/329），跟名稱一起記，找路更保險。',
+        '真的找不到方向，就近走進便利商店或找「파출소」（派出所），可以問路。'
+      ]},
+      { icon:'🌙', title:'晚上回飯店', steps:[
+        '首爾治安整體不錯，鐘路、明洞這種商圈晚上也很亮，盡量沿大馬路走，避開暗巷。',
+        '覺得累或路況不熟，直接搭計程車比硬走安全，車資通常不高。',
+        '出門前跟家人／朋友分享即時位置（Google地圖或LINE都有這功能），讓人知道你在哪。',
+        '記住飯店附近一個明顯地標（例如24小時便利商店），跟司機或路人說會更快找到。'
+      ]},
+      { icon:'🚕', title:'計程車', steps:[
+        '建議用 Kakao T 叫車，比路邊攔車更不容易被繞路或喊錯地址，也有跳表可查。',
+        '路邊攔車認明白色／橘色一般計程車；黑色「模範計程車」費率較高。',
+        '上車前把韓文地址截圖給司機看，比用講的準確。',
+        '大部分計程車能刷卡，但建議身上留一點現金備用。'
+      ]},
+      { icon:'💳', title:'刷卡失敗', steps:[
+        '出發前先打電話給發卡銀行，說明會在韓國刷卡，避免被系統當成異常交易而鎖卡。',
+        '準備一張備用卡＋少量現金，不要只帶一張卡出門。',
+        '部分小吃攤、市場攤位是「현금만」（只收現金），刷卡機也可能收訊不穩。',
+        'T-money交通卡在便利商店也能拿來小額付款，是很好用的備案。'
+      ]},
+      { icon:'🍽️', title:'餐廳不收一人客', steps:[
+        '進門前可以先問「혼자 가능해요?」（我一個人可以嗎？），省得白排隊。',
+        '被拒絕的話，這份攻略裡標「一人友善 OK」的店家可以直接當備案，詳細頁都有列。',
+        '真的很想吃那間，也可以考慮點兩人份自己吃，多花一點錢但吃得到。',
+        '24小時餐廳、美食街、便利商店永遠是一人旅的保底選項。'
+      ]},
+      { icon:'📶', title:'手機突然沒網路', steps:[
+        '先確認 eSIM 有沒有正確啟用，可以翻出離線存的購買確認信截圖核對設定。',
+        '試著重新開關飛航模式，或直接重新開機。',
+        '便利商店、咖啡廳、地鐵站、HiKR Ground、百貨公司大多有免費WiFi可以應急。',
+        '真的處理不了，可以打LG U+客服電話求助（見下方緊急聯絡資訊）。'
+      ]},
+      { icon:'🔋', title:'行動電源沒電了', steps:[
+        '已查證：韓國很多便利商店、地鐵站、咖啡廳都有「共享行動電源」租借機，現場掃碼租借，在任一合作點都能歸還，不用回原本借的地方，是最快的救急方式。使用方式通常是：①找到機台上的QR code，用手機相機掃描 ②依畫面指示註冊（部分需要韓國門號認證，外國旅客可能卡在這一步）③刷卡付押金／授權金 ④機台會自動彈出一顆行動電源，直接拿走 ⑤用完後找任一台同品牌機台插回去歸還，超過免費時數開始計費。',
+        '⚠️老實說：這類租借機有些需要韓國本地門號認證，外國旅客不一定能順利完成註冊。行不通的話，直接回到上面「找店家借插座」那個辦法最保險，或到「地點收藏→咖啡」分類找 Starbucks 鐘路3街店，連鎖店座位多、插座相對容易找。',
+        '找便利商店、咖啡廳、飯店大廳，禮貌詢問能不能借插座直接用線充手機，通常順便消費就不會被拒絕。',
+        '部分地鐵站設有手機充電站，留意站內看板或詢問站務員。',
+        '養成習慣：電量剩30～40%就找機會補電，不要等到完全沒電才開始找，尤其是玩Pokémon GO很耗電。'
+      ]}
+    ]},
+    { id:'toilet', title:'廁所計畫', en:'Toilet Plan', type:'toilet', places:['仁川機場','地鐵站','HiKR Ground','MUSINSA','百貨公司','大型咖啡店'] },
+    { id:'chuseok', title:'中秋連假用餐備案', en:'Chuseok Backup Dining', type:'chuseokBackup',
+      note:'⚠️2026年韓國中秋節（추석）是9/25（五），官方連假9/24（四）～9/27（日），剛好蓋住你9/26、9/27兩天。這兩天鐘路／聖水／明洞的獨立小吃店、燒肉店有機會真的沒開，以下是連鎖店／24小時店的備案——這類店通常照常營業，但仍建議當天出發前用NAVER Map再確認一次營業狀態。9/28連假已結束，應該恢復正常。',
+      dayGroups:[
+        { label:'9/26（六）鐘路一帶', items:[
+          { name:'김가네 김밥 종로3가店', kr:'김가네 김밥 종로3가', hours:'24小時營業', note:'連鎖飯捲店，全天候營業，早中晚都能吃', placeId:'ChIJf66KgOeifDUR3xUQ6MMFzR0' },
+          { name:'Kyochon Chicken 鐘路1號店', kr:'교촌치킨 종로1호점', hours:'11:00–24:00', note:'大型連鎖炸雞店，晚餐備案', placeId:'ChIJIzIOFySjfDURF8ImDr-x3LA' },
+          { name:'Burger King 鐘路店', kr:'버거킹 종로점', hours:'9:00–24:00', note:'國際連鎖速食，全天候可用', placeId:'ChIJC1-Os-eifDURUpJ3DXJOiBA' }
+        ]},
+        { label:'9/27（日）聖水／明洞一帶', items:[
+          { name:"McDonald's 明洞店", kr:'맥도날드 명동점', hours:'6:00–24:00', note:'大型分店，早餐也能吃，離明洞晚餐地點很近', placeId:'ChIJ2dv02O-ifDURr_mJyhANetk' },
+          { name:'Kyochon Chicken 市廳店', kr:'교촌치킨 서울시청점', hours:'11:00–1:00', note:'晚餐吃到很晚也不怕沒開', placeId:'ChIJRX-L9dqjfDURQFZA4WqRcB0' },
+          { name:'김밥천국 명동점', kr:'김밥천국 명동점', hours:'7:30–23:00', note:'平價連鎖飯捲店，明洞地鐵4號出口旁', placeId:'ChIJI56m-76jfDURvPmtm_biq24' }
+        ]},
+        { label:'全程保底選項', items:[
+          { name:'CU／GS25 便利商店', kr:'CU 편의점', hours:'24小時', note:'走到哪都有，全年無休，真的找不到吃的就靠它', placeId:'ChIJMWcXMwCjfDURkPIOmwUv6pw' }
+        ]}
+      ] },
+    { id:'contacts', title:'緊急聯絡資訊', en:'Emergency Contacts', type:'contacts', contacts:[
+      { name:'韓國警察', num:'112', tel:'112', big:true },
+      { name:'消防／救護車', num:'119', tel:'119', big:true },
+      { name:'駐韓國台北代表部', num:'+82-2-6329-6000', tel:'+82226329600' },
+      { name:'代表部緊急聯絡電話', num:'+82-10-9080-2761（限急難事件）', tel:'+821090802761' },
+      { name:'旅外國人急難救助專線（台灣境內）', num:'0800-085-095', tel:'0800085095' },
+      { name:'LG U+ 機場漫遊中心', num:'+82-10-3998-1004', tel:'+821039981004' },
+      { name:'飯店', num:'請自行填入（保存於訂房確認信）', tel:'' },
+      { name:'旅行保險', num:'請自行填入', tel:'' }
+    ]},
+    { id:'offline', title:'離線備份', en:'Save Offline', type:'tasks', groups:[
+      { label:'', tasks:[
+        {id:'off1', label:'護照資料頁照片'}, {id:'off2', label:'去回程機票截圖'}, {id:'off3', label:'飯店訂單'},
+        {id:'off4', label:'飯店韓文地址'}, {id:'off5', label:'保險資料'}, {id:'off6', label:'駐韓代表部地址'},
+        {id:'off7', label:'緊急聯絡電話'}, {id:'off8', label:'LG U+ 預約資訊'}, {id:'off9', label:'Pokémon 活動頁截圖'}, {id:'off10', label:'主要行程截圖'}
+      ]}
+    ], infoNote:'⚠️不要把唯一一份護照備份和護照本人放在同一個包裡。' },
+    { id:'finalnight', title:'出發前一晚確認', en:'Final Night Check', type:'finalnight', tasks:[
+      {id:'fn1', label:'護照'}, {id:'fn2', label:'手機'}, {id:'fn3', label:'錢包'}, {id:'fn4', label:'信用卡'},
+      {id:'fn5', label:'行動電源'}, {id:'fn6', label:'充電線'}, {id:'fn7', label:'常備藥'}, {id:'fn8', label:'eSIM 預約資訊'},
+      {id:'fn9', label:'機票'}, {id:'fn10', label:'ヌオー'}
+    ], tomorrow:{ code:'TW250', route:'NRT 08:40 → ICN 11:30' } }
+  ];
+
+  const DUE_SOON_ITEMS = [
+    { date:'2026-09-23', label:'填 Korea e-Arrival Card' },
+    { date:'2026-09-25', label:'重新確認 Pokémon 活動公告' },
+    { date:'2026-09-25', label:'重新確認 6002 機場巴士上車位置' }
+  ];
+
+  /* ================= STATE ================= */
+  let state = { view:'prep', dayKey:null, detailId:null, filter:'全部', shopSubFilter:'全部', emergencyOpen:false,
+    prepFilter:'全部', prepOpen:{ net:true, entry:true, flight:true, insurance:true, packing:false, solo:false, toilet:false, contacts:false, offline:false, finalnight:false },
+    packingOpen:{} };
+
+  let visited = loadLS('seoul-visited-v1', {});
+  let prepStatus = loadLS('seoul-prep-status-v1', {});
+  let insuranceForm = loadLS('seoul-prep-insurance-v1', { outbound:'', inbound:'', confirmed:'unsure' });
+  let packingChecked = loadLS('seoul-prep-packing-v1', {});
+
+  const mainEl = document.getElementById('tg-main');
+
+  function go(view, extra){ state.view = view; if (extra) Object.assign(state, extra); state.resetScroll = true; render(); }
+  function openDetail(id){ state.detailId = id; state.resetScroll = true; render(); }
+  function closeDetail(){ state.detailId = null; state.resetScroll = true; render(); }
+
+  /* ---------- nav ---------- */
+  function renderTabNav(){
+    const nav = document.createElement('div');
+    nav.className = 'tab-nav';
+    const tabs = [
+      { key:'prep', label:'行前準備' },
+      { key:'day1', label:'9/26' }, { key:'day2', label:'9/27' }, { key:'day3', label:'9/28' },
+      { key:'places', label:'地點收藏' }
+    ];
+    tabs.forEach(t=>{
+      const btn = document.createElement('button');
+      const isActive = (t.key==='prep' && state.view==='prep') || (t.key==='places' && state.view==='places') ||
+        (state.view==='day' && state.dayKey===t.key);
+      btn.className = 'tab-btn' + (isActive ? ' active' : '');
+      btn.textContent = t.label;
+      btn.onclick = ()=>{
+        if (t.key==='prep') go('prep');
+        else if (t.key==='places') go('places');
+        else go('day', {dayKey:t.key});
+      };
+      nav.appendChild(btn);
+    });
+    mainEl.appendChild(nav);
+  }
+
+  const emergencyBtn = document.createElement('button');
+  emergencyBtn.className = 'emergency-fab';
+  emergencyBtn.textContent = '🚨';
+  emergencyBtn.onclick = ()=>{ state.emergencyOpen = true; render(); };
+
+  /* ---------- DAY VIEW ---------- */
+  function renderDay(){
+    const day = DAYS.find(d=>d.key===state.dayKey);
+    const wrap = document.createElement('div');
+    const topBar = document.createElement('div'); topBar.className='top-bar';
+    const backBtn = document.createElement('button'); backBtn.className='back-btn'; backBtn.textContent='←';
+    backBtn.onclick = ()=> go('prep'); topBar.appendChild(backBtn);
+    wrap.appendChild(topBar);
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = '<h2 class="serif">'+day.title+'</h2><div class="d-desc">'+day.desc+'</div>';
+    wrap.appendChild(header);
+
+    day.stops.forEach(s=>{
+      const place = PLACES[s.ref];
+      const card = document.createElement('div');
+      card.className = 'stop-card';
+      const icon = document.createElement('div');
+      icon.className = 'stop-icon';
+      icon.textContent = (place.cuisine || place.activity || '').split(' ')[0] || ICONS[place.kind] || '📍';
+      card.appendChild(icon);
+      const body = document.createElement('div');
+      body.className = 'stop-body';
+      let html = '<div class="stop-time">'+s.time+'</div><div class="stop-name">'+place.nameZh+'</div>' +
+        '<div class="stop-kr">'+place.nameKr+'</div>' +
+        (place.cuisine || place.activity ? '<div class="stop-cuisine">'+(place.cuisine||place.activity)+'</div>' : '') +
+        '<div class="stop-highlight">'+ (place.why || '') +'</div>';
+      if (place.backups && place.backups.length){
+        html += '<div class="stop-alt">備案：'+ place.backups.map(id=>PLACES[id].nameZh).join('、') +'</div>';
+      }
+      body.innerHTML = html;
+      const btn = document.createElement('button');
+      btn.className = 'detail-btn'; btn.textContent = '詳細を見る';
+      btn.onclick = ()=> openDetail(place.id);
+      body.appendChild(btn);
+      card.appendChild(body);
+      wrap.appendChild(card);
+    });
+    if (day.endNote){
+      const note = document.createElement('div'); note.className = 'note-card'; note.textContent = day.endNote;
+      wrap.appendChild(note);
+    }
+    mainEl.appendChild(wrap);
+  }
+
+  /* ---------- PLACES PAGE ---------- */
+  /* ---------- SHOPPING curated view ---------- */
+  let shoppingChecklist = loadLS('seoul-shopping-checklist-v1', null);
+  if (!shoppingChecklist){
+    shoppingChecklist = ['Haechi 小物','SEOUL MY SOUL 磁鐵','首爾明信片','韓國設計文具','Pokémon 周邊','Olive Young','公司伴手禮']
+      .map((label,i)=>({ id:'sc'+i, label, status:'want' }));
+    saveLS('seoul-shopping-checklist-v1', shoppingChecklist);
+  }
+  function cycleShopItem(id){
+    const item = shoppingChecklist.find(i=>i.id===id);
+    item.status = item.status==='want' ? 'bought' : (item.status==='bought' ? 'skip' : 'want');
+    saveLS('seoul-shopping-checklist-v1', shoppingChecklist);
+    render();
+  }
+
+  function shopCardRow(p){
+    const row = document.createElement('div');
+    row.className = 'place-row';
+    row.onclick = ()=> openDetail(p.id);
+    const icon = (p.cuisine||'').split(' ')[0] || '🛍️';
+    let tags = '';
+    if (p.routeBadge) tags += '<span class="task-badge">'+p.routeBadge+'</span>';
+    row.innerHTML = '<div class="stop-icon">'+icon+'</div>' +
+      '<div class="stop-body"><div class="stop-name">'+p.nameZh+'</div><div class="stop-kr">'+p.nameKr+'</div>' +
+      '<div class="stop-highlight">'+(p.why||'')+'</div><div style="margin-top:4px;">'+tags+'</div></div>';
+    return row;
+  }
+
+  function renderShoppingView(wrap){
+    const featured = document.createElement('div');
+    featured.className = 'day-card';
+    featured.style.cursor = 'pointer';
+    featured.innerHTML = '<div class="d-date">SEOUL ONLY</div><h2 class="serif">首爾限定紀念品</h2>' +
+      '<div class="d-desc">官方周邊・設計雜貨・特色小店</div>' +
+      '<div class="tag-row"><span class="tag-pill">查看首爾限定</span></div><div class="go-arrow">→</div>';
+    featured.onclick = ()=>{ state.shopSubFilter = '首爾官方'; render(); };
+    wrap.appendChild(featured);
+
+    const subStrip = document.createElement('div');
+    subStrip.className = 'filter-strip';
+    SHOP_SUBFILTERS.forEach(f=>{
+      const pill = document.createElement('button');
+      pill.className = 'filter-pill' + (state.shopSubFilter===f ? ' active' : '');
+      pill.textContent = f;
+      pill.onclick = ()=>{ state.shopSubFilter = f; render(); };
+      subStrip.appendChild(pill);
+    });
+    wrap.appendChild(subStrip);
+
+    const shopItems = Object.values(PLACES).filter(p=>p.tag==='Shopping');
+    const sub = state.shopSubFilter;
+    const matches = (p)=> sub==='全部' || (p.shopCats && p.shopCats.includes(sub)) ||
+      (sub==='Pokémon Goods' && (p.id==='p1' || p.id==='p2'));
+
+    if (sub !== '全部'){
+      const heading = document.createElement('div'); heading.className='day-heading'; heading.style.marginLeft='0';
+      heading.textContent = sub;
+      wrap.appendChild(heading);
+      let list = shopItems.filter(matches);
+      if (sub==='Pokémon Goods') list = [PLACES['p1'], PLACES['p2']];
+      list.forEach(p=> wrap.appendChild(shopCardRow(p)));
+      if (sub==='公司伴手禮') renderCompanyGifts(wrap);
+      return;
+    }
+
+    // full curated layout
+    const khHeading = document.createElement('div'); khHeading.className='day-heading'; khHeading.style.marginLeft='0';
+    khHeading.textContent = 'Korean Heritage Visitor Passport';
+    wrap.appendChild(khHeading);
+    const khCard = document.createElement('div'); khCard.className='place-row';
+    khCard.onclick = ()=> openDetail('khp1');
+    khCard.innerHTML = '<div class="stop-icon">🛂</div><div class="stop-body"><div class="stop-name">韓國文化遺產訪問護照</div>' +
+      '<div class="stop-kr">코리아헤리티지 방문자여권</div><div class="stop-highlight">外國旅客集章護照，集滿可兌換紀念品</div>' +
+      '<div style="margin-top:4px;"><span class="task-badge">出發前再確認</span></div></div>';
+    wrap.appendChild(khCard);
+
+    const s1h = document.createElement('div'); s1h.className='day-heading'; s1h.style.marginLeft='0'; s1h.textContent='首爾官方紀念品';
+    wrap.appendChild(s1h);
+    const s1d = document.createElement('div'); s1d.className='d-desc'; s1d.style.padding='0 0 10px'; s1d.textContent='想買「真的有首爾感」的東西，優先看這裡。';
+    wrap.appendChild(s1d);
+    [PLACES['smSoul1'], PLACES['smSoul2']].forEach(p=> wrap.appendChild(shopCardRow(p)));
+
+    const s2h = document.createElement('div'); s2h.className='day-heading'; s2h.style.marginLeft='0'; s2h.textContent='韓國設計 & Lifestyle';
+    wrap.appendChild(s2h);
+    const s2d = document.createElement('div'); s2d.className='d-desc'; s2d.style.padding='0 0 10px'; s2d.textContent='比一般觀光紀念品更有設計感。';
+    wrap.appendChild(s2d);
+    wrap.appendChild(shopCardRow(PLACES['oimu1']));
+
+    const s3h = document.createElement('div'); s3h.className='day-heading'; s3h.style.marginLeft='0'; s3h.textContent='仁寺洞 & 北村小店';
+    wrap.appendChild(s3h);
+    [PLACES['kk1'], PLACES['kns1']].forEach(p=> wrap.appendChild(shopCardRow(p)));
+
+    const s4h = document.createElement('div'); s4h.className='day-heading'; s4h.style.marginLeft='0'; s4h.textContent='Pokémon Goods';
+    wrap.appendChild(s4h);
+    [PLACES['p1'], PLACES['p2']].forEach(p=> wrap.appendChild(shopCardRow(p)));
+
+    const s5h = document.createElement('div'); s5h.className='day-heading'; s5h.style.marginLeft='0'; s5h.textContent='Olive Young';
+    wrap.appendChild(s5h);
+    [PLACES['oy1'], PLACES['oy2']].forEach(p=> wrap.appendChild(shopCardRow(p)));
+
+    const s6h = document.createElement('div'); s6h.className='day-heading'; s6h.style.marginLeft='0'; s6h.textContent='公司伴手禮';
+    wrap.appendChild(s6h);
+    renderCompanyGifts(wrap);
+
+    const s7h = document.createElement('div'); s7h.className='day-heading'; s7h.style.marginLeft='0'; s7h.textContent='我的購物清單';
+    wrap.appendChild(s7h);
+    shoppingChecklist.forEach(item=>{
+      const row = document.createElement('div'); row.className='task-row';
+      const chk = document.createElement('div');
+      chk.className='task-check' + (item.status==='bought' ? ' done' : (item.status==='skip' ? ' doing' : ''));
+      chk.textContent = item.status==='bought' ? '✓' : '';
+      chk.onclick = ()=> cycleShopItem(item.id);
+      row.appendChild(chk);
+      const label = document.createElement('div'); label.className='task-label'+(item.status==='bought'?' done-text':'');
+      const statusLabel = item.status==='want' ? '想買' : (item.status==='bought' ? '已買' : '放棄');
+      label.innerHTML = item.label + ' <span class="task-badge">'+statusLabel+'</span>';
+      row.appendChild(label);
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderCompanyGifts(wrap){
+    COMPANY_GIFTS.forEach(g=>{
+      const card = document.createElement('div'); card.className='backup-item';
+      card.innerHTML = '<div class="bi-name">'+g.name+'</div><div class="bi-kr">'+g.kr+'</div>' +
+        '<div class="bi-note">'+g.note+'</div>' +
+        '<div class="bi-note">📦 '+g.pack+'　🧑‍🤝‍🧑 '+g.servings+'</div>' +
+        '<div class="bi-note">📍 '+g.where+'</div>';
+      wrap.appendChild(card);
+    });
+  }
+
+  function renderPlaces(){
+    const wrap = document.createElement('div');
+    const topBar = document.createElement('div'); topBar.className='top-bar';
+    const backBtn = document.createElement('button'); backBtn.className='back-btn'; backBtn.textContent='←';
+    backBtn.onclick = ()=> go('prep'); topBar.appendChild(backBtn);
+    wrap.appendChild(topBar);
+
+    const hero = document.createElement('div');
+    hero.className = 'hero';
+    hero.innerHTML = '<div class="eyebrow">SAVED PLACES</div><h1 class="serif" style="font-size:24px;">所有地點</h1><div class="sub">依區域分組，某間沒開時可以馬上找同區其他選擇</div>';
+    wrap.appendChild(hero);
+
+    const strip = document.createElement('div');
+    strip.className = 'filter-strip';
+    PLACES_FILTERS.forEach(f=>{
+      const pill = document.createElement('button');
+      pill.className = 'filter-pill' + (state.filter===f ? ' active' : '');
+      pill.textContent = f;
+      pill.onclick = ()=> go('places', {filter:f, shopSubFilter:'全部'});
+      strip.appendChild(pill);
+    });
+    wrap.appendChild(strip);
+
+    if (state.filter === '購物'){
+      renderShoppingView(wrap);
+      mainEl.appendChild(wrap);
+      const fl2 = document.createElement('div'); fl2.className='footer-link';
+      fl2.innerHTML = '<a href="#" id="toSourcesLink2">📎 查看完整資料來源</a>';
+      wrap.appendChild(fl2);
+      document.getElementById('toSourcesLink2').onclick = (e)=>{ e.preventDefault(); go('sources'); };
+      return;
+    }
+
+    const AREA_ORDER = ['仁川機場','交通移動','鐘路・清溪川','景福宮周邊（延伸推薦）','聖水','明洞','東大門','弘大方向（較遠）','汝矣島（額外景點，離主行程較遠）'];
+    AREA_ORDER.forEach(area=>{
+      const items = Object.values(PLACES).filter(p=>{
+        if (p.area !== area) return false;
+        if (state.filter !== '全部' && p.tag !== FILTER_TAG_MAP[state.filter]) return false;
+        return true;
+      });
+      if (!items.length) return;
+      const heading = document.createElement('div'); heading.className='day-heading'; heading.style.marginLeft='0';
+      heading.textContent = area;
+      wrap.appendChild(heading);
+      items.forEach(p=>{
+        const row = document.createElement('div');
+        row.className = 'place-row';
+        row.onclick = ()=> openDetail(p.id);
+        const cardIcon = (p.cuisine || p.activity || '').split(' ')[0] || ICONS[p.kind] || '📍';
+        const cuisineLabel = p.cuisine || p.activity || '';
+        row.innerHTML = '<div class="stop-icon">'+cardIcon+'</div>' +
+          '<div class="stop-body"><div class="stop-name">'+p.nameZh+'</div><div class="stop-kr">'+p.nameKr+'</div>' +
+          (cuisineLabel ? '<div class="stop-highlight">'+cuisineLabel+'</div>' : '') + '</div>';
+        wrap.appendChild(row);
+      });
+    });
+
+    const fl = document.createElement('div');
+    fl.className = 'footer-link';
+    fl.innerHTML = '<a href="#" id="toSourcesLink">📎 查看資料來源</a>';
+    wrap.appendChild(fl);
+
+    mainEl.appendChild(wrap);
+    document.getElementById('toSourcesLink').onclick = (e)=>{ e.preventDefault(); go('sources'); };
+  }
+
+  function renderSources(){
+    const wrap = document.createElement('div');
+    const topBar = document.createElement('div'); topBar.className='top-bar';
+    const backBtn = document.createElement('button'); backBtn.className='back-btn'; backBtn.textContent='←';
+    backBtn.onclick = ()=> go('places'); topBar.appendChild(backBtn);
+    wrap.appendChild(topBar);
+
+    const hero = document.createElement('div');
+    hero.className = 'hero';
+    hero.innerHTML = '<div class="eyebrow">SOURCES</div><h1 class="serif" style="font-size:24px;">資料來源</h1>';
+    wrap.appendChild(hero);
+
+    const g1 = document.createElement('div'); g1.className = 'source-group';
+    g1.innerHTML = '<h3>官方資訊 ／ 店家官網・社群</h3>';
+    SOURCES.official.forEach(s=>{
+      const item = document.createElement('div'); item.className = 'source-item';
+      item.innerHTML = '<div class="s-name">'+s.name+'</div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">'+s.url+'</a>';
+      g1.appendChild(item);
+    });
+    wrap.appendChild(g1);
+
+    const g2 = document.createElement('div'); g2.className = 'source-group';
+    g2.innerHTML = '<h3>官方 YouTube 頻道</h3>';
+    SOURCES.youtube.forEach(s=>{
+      const item = document.createElement('div'); item.className = 'source-item';
+      item.innerHTML = '<div class="s-name">'+s.name+'</div><a href="https://youtube.com/'+s.handle+'" target="_blank" rel="noopener noreferrer">youtube.com/'+s.handle+'</a>';
+      g2.appendChild(item);
+    });
+    wrap.appendChild(g2);
+
+    const g3 = document.createElement('div'); g3.className = 'source-group';
+    g3.innerHTML = '<h3>⚠️ 尚未確認原文連結的分享文章</h3>';
+    SOURCES.unverified.forEach(s=>{
+      const item = document.createElement('div'); item.className = 'source-item';
+      item.innerHTML = '<div class="s-name">'+s+'</div><div class="s-missing">原文網址尚未取得</div>';
+      g3.appendChild(item);
+    });
+    wrap.appendChild(g3);
+
+    mainEl.appendChild(wrap);
+  }
+
+  /* ---------- DETAIL MODAL (place) ---------- */
+  function soloBadge(v){
+    if (v==='ok') return '<span class="badge ok">OK・對一人友善</span>';
+    if (v==='ng') return '<span class="badge ng">NG・不建議單獨前往</span>';
+    return '<span class="badge unsure">不確定，建議現場詢問</span>';
+  }
+  function renderDetail(){
+    const p = PLACES[state.detailId];
+    const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
+    const closeBtn = document.createElement('button'); closeBtn.className='modal-close'; closeBtn.textContent='✕';
+    closeBtn.onclick = closeDetail; overlay.appendChild(closeBtn);
+
+    // swipe left or right to go back, like a native back gesture
+    let touchStartX = null, touchStartY = null;
+    overlay.addEventListener && overlay.addEventListener('touchstart', (e)=>{
+      touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+    }, {passive:true});
+    overlay.addEventListener && overlay.addEventListener('touchend', (e)=>{
+      if (touchStartX === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        closeDetail();
+      }
+      touchStartX = null; touchStartY = null;
+    }, {passive:true});
+
+    const carousel = document.createElement('div'); carousel.className='carousel';
+    carousel.innerHTML = '<div class="carousel-slide">'+((p.cuisine||p.activity||'').split(' ')[0] || ICONS[p.kind] || '📍')+'</div>' +
+      '<div class="carousel-dots"><span class="c-dot active"></span><span class="c-dot"></span><span class="c-dot"></span></div>';
+    overlay.appendChild(carousel);
+    const carouselNote = document.createElement('div'); carouselNote.className='carousel-note';
+    carouselNote.textContent = '目前沒有內建實際照片（避免未經授權重製圖片）';
+    overlay.appendChild(carouselNote);
+    if (p.placeId){
+      const gLink = document.createElement('a'); gLink.className='gmaps-photo-link'; gLink.href=gmapsPlaceUrl(p.placeId);
+      gLink.target='_blank'; gLink.rel='noopener noreferrer'; gLink.textContent='📷 到 Google Maps 看真實照片與評論';
+      overlay.appendChild(gLink);
+    }
+
+    const body = document.createElement('div'); body.className='detail-body';
+    body.innerHTML = '<div class="detail-title serif">'+p.nameZh+'</div><div class="detail-kr">'+(p.nameKr||'')+'</div>' +
+      (p.cuisine || p.activity ? '<div class="stop-cuisine" style="font-size:13px;margin-top:4px;">'+(p.cuisine||p.activity)+'</div>' : '') +
+      '<div class="detail-roman">'+(p.nameRoman||'')+'</div>';
+
+    const grid = document.createElement('div'); grid.className='info-grid';
+    function row(label, val){ if (!val) return; const r=document.createElement('div'); r.className='info-row';
+      r.innerHTML = '<div class="i-label">'+label+'</div><div class="i-val">'+val+'</div>'; grid.appendChild(r); }
+    row('地址', p.addr); row('營業時間', p.hours); row('最近車站', p.nearestStation); row('預算', p.budget);
+    row('為什麼安排', p.why); if (p.rating) row('評分', p.rating); if (p.cautions) row('注意事項', p.cautions); if (p.source) row('來源', p.source.replace('來源：',''));
+    if (p.sourceUrl){
+      const srcLinkRow = document.createElement('div'); srcLinkRow.style.margin = '-2px 0 4px';
+      srcLinkRow.innerHTML = '<a href="'+p.sourceUrl+'" target="_blank" rel="noopener noreferrer" style="font-size:11.5px;color:var(--accent2);text-decoration:underline;">📖 查看原文</a>';
+      grid.appendChild(srcLinkRow);
+    }
+    body.appendChild(grid);
+
+    if (p.kind === 'food'){
+      const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>一人用餐資訊</h4>' + soloBadge(p.soloFriendly);
+      if (p.food){ const f=p.food;
+        block.innerHTML += '<div class="info-row" style="margin-top:10px;"><div class="i-label">最低點餐</div><div class="i-val">'+(f.minOrder||'不確定')+'</div></div>' +
+          '<div class="info-row"><div class="i-label">推薦料理</div><div class="i-val">'+(f.recommendedDish||'不確定')+'</div></div>' +
+          '<div class="info-row"><div class="i-label">Kiosk</div><div class="i-val">'+(f.hasKiosk? '有':'不確定／無')+'</div></div>' +
+          '<div class="info-row"><div class="i-label">外語菜單</div><div class="i-val">'+(f.hasForeignMenu||'不確定')+'</div></div>'; }
+      body.appendChild(block);
+    }
+    if (p.kind === 'pokemon'){
+      const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>Pokémon 活動資訊</h4>';
+      const pk = p.pokemon || {};
+      block.innerHTML += '<div class="info-row"><div class="i-label">活動日期</div><div class="i-val">'+(pk.eventDate||'常態設施')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">入場方式</div><div class="i-val">'+(pk.entry||'不確定')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">是否需預約</div><div class="i-val">'+(pk.reservation||'不確定')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">現場候位</div><div class="i-val">'+(pk.queueMethod||'不確定')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">商品資訊</div><div class="i-val">'+(pk.merch||'不確定')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">Stamp Rally</div><div class="i-val">'+(pk.stampRally||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">GO內活動</div><div class="i-val">'+(pk.goEvent||'不確定')+'</div></div>';
+      body.appendChild(block);
+      if (p.sourceUrl){ const s=document.createElement('div'); s.style.fontSize='11px'; s.style.color='var(--muted)'; s.style.marginTop='8px';
+        s.innerHTML = '資訊來源：<a href="'+p.sourceUrl+'" target="_blank" rel="noopener noreferrer" style="color:var(--accent2)">'+p.sourceUrl+'</a>'; block.appendChild(s); }
+    }
+    if (p.kind === 'transport' && p.transport){
+      const t = p.transport; const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>交通資訊</h4>' +
+        '<div class="info-row"><div class="i-label">出發站</div><div class="i-val">'+(t.from||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">抵達站</div><div class="i-val">'+(t.to||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">路線</div><div class="i-val">'+(t.line||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">預估時間</div><div class="i-val">'+(t.estTime||'—')+'</div></div>' +
+        (t.note ? '<div class="info-row"><div class="i-label">備註</div><div class="i-val">'+t.note+'</div></div>' : '');
+      body.appendChild(block);
+    }
+    if (p.kind === 'shopping'){
+      const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>購物資訊</h4>';
+      if (p.sfLevel){
+        const stars = '★'.repeat(p.sfLevel) + '☆'.repeat(5-p.sfLevel);
+        block.innerHTML += '<div class="info-row"><div class="i-label">首爾限定感</div><div class="i-val">'+stars+'</div></div>';
+      }
+      block.innerHTML += (p.routeBadge ? '<div class="info-row"><div class="i-label">路線</div><div class="i-val"><span class="task-badge">'+p.routeBadge+'</span></div></div>' : '') +
+        (p.recommendedBuy ? '<div class="info-row"><div class="i-label">推薦買什麼</div><div class="i-val">'+p.recommendedBuy+'</div></div>' : '') +
+        (p.suitableFor ? '<div class="info-row"><div class="i-label">適合送誰</div><div class="i-val">'+p.suitableFor+'</div></div>' : '') +
+        (p.stayTime ? '<div class="info-row"><div class="i-label">建議停留</div><div class="i-val">'+p.stayTime+'</div></div>' : '');
+      body.appendChild(block);
+      if (p.isPassportFeature && p.passportTasks){
+        const taskBlock = document.createElement('div'); taskBlock.className='section-block';
+        taskBlock.innerHTML = '<h4>任務清單</h4>' + p.passportTasks.map(t=>'<div class="trouble-card" style="margin-bottom:6px;padding:8px 12px;"><div class="tr-step" style="padding-left:0;">'+t+'</div></div>').join('');
+        body.appendChild(taskBlock);
+      }
+    }
+    if (p.japaneseReview){
+      const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>日本人實際體驗</h4><div class="jp-source">'+p.japaneseReview.note+'</div>';
+      body.appendChild(block);
+    }
+
+    const linksBlock = document.createElement('div'); linksBlock.className='section-block';
+    linksBlock.innerHTML = '<h4>外部連結</h4>';
+    const linkGrid = document.createElement('div'); linkGrid.className='link-grid';
+    function extLink(label, url, primary){ if (!url) return; const a=document.createElement('a');
+      a.className='ext-link'+(primary?' primary':''); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent=label; linkGrid.appendChild(a); }
+    extLink('📍 NAVER Map', p.links && p.links.naver ? p.links.naver : (p.nameKr ? naverUrl(p.nameKr) : null), true);
+    if (p.placeId) extLink('🗺 Google Maps', gmapsPlaceUrl(p.placeId));
+    if (p.lat && p.lng) extLink('🚏 路線規劃', gmapsDirUrl(p.lat, p.lng));
+    if (p.links){ extLink('🔗 官方網站', p.links.official); extLink('📷 Instagram', p.links.instagram); extLink('▶️ YouTube', p.links.youtube); }
+    linksBlock.appendChild(linkGrid); body.appendChild(linksBlock);
+
+    if (p.backups && p.backups.length){
+      const altBlock = document.createElement('div'); altBlock.className='section-block'; altBlock.innerHTML='<h4>備案</h4>';
+      const altRow = document.createElement('div'); altRow.className='alt-row';
+      p.backups.forEach(id=>{ const alt=PLACES[id]; const card=document.createElement('div'); card.className='alt-card';
+        card.onclick=()=>openDetail(id); card.innerHTML='<div class="a-name">'+alt.nameZh+'</div><div class="a-note">'+(alt.why||'')+'</div>'; altRow.appendChild(card); });
+      altBlock.appendChild(altRow); body.appendChild(altBlock);
+    }
+    overlay.appendChild(body);
+    document.getElementById('tg-app').appendChild(overlay);
+    overlay.scrollTop = 0;
+    requestAnimationFrame(()=>{ overlay.scrollTop = 0; });
+  }
+
+  /* ================= PREP RENDER ================= */
+  function taskStatus(id){ return prepStatus[id] || 'todo'; }
+  function cycleTask(id){
+    const cur = taskStatus(id);
+    const next = cur==='todo' ? 'doing' : (cur==='doing' ? 'done' : 'todo');
+    prepStatus[id] = next; saveLS('seoul-prep-status-v1', prepStatus); render();
+  }
+  function allTaskIds(){
+    let ids = [];
+    PREP_SECTIONS.forEach(sec=>{
+      if (sec.type==='tasks' && sec.groups) sec.groups.forEach(g=> g.tasks.forEach(t=> ids.push(t.id)));
+      if (sec.type==='flighthotel'){ sec.flightTasks.forEach(t=>ids.push(t.id)); sec.hotelTasks.forEach(t=>ids.push(t.id)); }
+      if (sec.type==='insurance') sec.tasks.forEach(t=>ids.push(t.id));
+      if (sec.type==='finalnight') sec.tasks.forEach(t=>ids.push(t.id));
+    });
+    return ids;
+  }
+  function renderTaskRow(t){
+    const st = taskStatus(t.id);
+    if (state.prepFilter !== '全部'){
+      const map = {'未開始':'todo','進行中':'doing','已完成':'done'};
+      if (st !== map[state.prepFilter]) return null;
+    }
+    const row = document.createElement('div'); row.className='task-row';
+    const chk = document.createElement('div'); chk.className='task-check'+(st==='doing'?' doing':(st==='done'?' done':''));
+    chk.textContent = st==='done' ? '✓' : '';
+    chk.onclick = ()=> cycleTask(t.id);
+    row.appendChild(chk);
+    const label = document.createElement('div'); label.className='task-label'+(st==='done'?' done-text':'');
+    label.innerHTML = t.label + (t.dateBadge ? ' <span class="task-badge">'+t.dateBadge+'</span>' : '');
+    row.appendChild(label);
+    return row;
+  }
+  function toggleSection(id){ state.prepOpen[id] = !state.prepOpen[id]; render(); }
+
+  function renderPrepSectionShell(sec, bodyBuilder){
+    const box = document.createElement('div'); box.className='prep-section';
+    const head = document.createElement('div'); head.className='prep-section-head';
+    head.onclick = ()=> toggleSection(sec.id);
+    head.innerHTML = '<div><h3 class="serif">'+sec.title+'</h3><span class="ps-en">'+sec.en+'</span></div>' +
+      '<span class="ps-caret">'+(state.prepOpen[sec.id] ? '▲' : '▼')+'</span>';
+    box.appendChild(head);
+    if (state.prepOpen[sec.id]){
+      const bodyEl = document.createElement('div'); bodyEl.className='prep-section-body';
+      bodyBuilder(bodyEl);
+      box.appendChild(bodyEl);
+    }
+    return box;
+  }
+
+  function renderPrep(){
+    const wrap = document.createElement('div');
+    const hero = document.createElement('div'); hero.className='hero';
+    hero.innerHTML = '<div class="eyebrow">BEFORE YOU GO</div><h1 class="serif">行前準備</h1><div class="sub">Seoul 2026 · 9/26–9/28</div>';
+    wrap.appendChild(hero);
+
+    // progress
+    const ids = allTaskIds();
+    const done = ids.filter(id=>taskStatus(id)==='done').length;
+    const prog = document.createElement('div'); prog.className='prep-progress';
+    prog.innerHTML = '<span class="pp-num">'+done+' / '+ids.length+'</span> 已完成' +
+      '<div class="prep-track"><div class="prep-fill" style="width:'+(ids.length?Math.round(done/ids.length*100):0)+'%"></div></div>';
+    wrap.appendChild(prog);
+
+    // due soon
+    const now = new Date();
+    const soon = DUE_SOON_ITEMS.filter(it=>{
+      const d = new Date(it.date+'T00:00:00');
+      const diffDays = (d - now) / 86400000;
+      return diffDays <= 3; // overdue or within 3 days
+    });
+    const dueBox = document.createElement('div'); dueBox.className='due-soon';
+    if (soon.length){
+      dueBox.innerHTML = '<h4>近期要做 · Due Soon</h4>' +
+        soon.map(it=>{
+          const d = new Date(it.date+'T00:00:00');
+          const md = (d.getMonth()+1)+'/'+d.getDate();
+          return '<div class="due-item"><span class="due-date">'+md+'</span>'+it.label+'</div>';
+        }).join('');
+    } else {
+      dueBox.innerHTML = '<h4>近期要做 · Due Soon</h4><div class="due-ok">目前沒有急著要做的事 ✓</div>';
+    }
+    wrap.appendChild(dueBox);
+
+    // filter strip
+    const fs = document.createElement('div'); fs.className='prep-filter-strip';
+    ['全部','未開始','進行中','已完成'].forEach(f=>{
+      const pill = document.createElement('button');
+      pill.className = 'filter-pill' + (state.prepFilter===f ? ' active' : '');
+      pill.textContent = f; pill.onclick = ()=>{ state.prepFilter = f; render(); };
+      fs.appendChild(pill);
+    });
+    wrap.appendChild(fs);
+
+    PREP_SECTIONS.forEach(sec=>{
+      let sectionEl;
+      if (sec.type === 'tasks'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.groups.forEach(g=>{
+            if (g.label){
+              const gl = document.createElement('div'); gl.className='prep-group-label';
+              gl.textContent = g.label + (g.dateBadge ? '　📅 '+g.dateBadge : '');
+              bodyEl.appendChild(gl);
+            }
+            g.tasks.forEach(t=>{ const row = renderTaskRow(t); if (row) bodyEl.appendChild(row); });
+          });
+          if (sec.infoNote){ const note=document.createElement('div'); note.className='info-card'; note.textContent=sec.infoNote; bodyEl.appendChild(note); }
+          if (sec.extraCard){ const card=document.createElement('div'); card.className='info-card';
+            card.innerHTML = '<div class="ic-title">'+sec.extraCard.title+'</div>'+sec.extraCard.body+
+              (sec.extraCard.recheck? '<div style="margin-top:6px;"><span class="task-badge">'+sec.extraCard.recheck+'</span></div>' : '');
+            bodyEl.appendChild(card); }
+        });
+      } else if (sec.type === 'flighthotel'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.flights.forEach(f=>{ const c=document.createElement('div'); c.className='flight-card';
+            c.innerHTML = '<div class="fc-route">'+f.code+' ・ '+f.route+'</div><div class="fc-time">'+f.time+'</div>'; bodyEl.appendChild(c); });
+          sec.flightTasks.forEach(t=>{ const row = renderTaskRow(t); if (row) bodyEl.appendChild(row); });
+          const hc = document.createElement('div'); hc.className='hotel-card';
+          hc.innerHTML = '<div class="fc-route">'+sec.hotel.name+'</div><div class="fc-time">'+sec.hotel.altName+'</div>';
+          bodyEl.appendChild(hc);
+          sec.hotelTasks.forEach(t=>{ const row = renderTaskRow(t); if (row) bodyEl.appendChild(row); });
+        });
+      } else if (sec.type === 'insurance'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          const f1 = document.createElement('div'); f1.className='form-field';
+          f1.innerHTML = '<label>去程機票付款卡</label><input type="text" id="ins-out" value="'+(insuranceForm.outbound||'')+'" placeholder="例：XX銀行 XX卡">';
+          bodyEl.appendChild(f1);
+          const f2 = document.createElement('div'); f2.className='form-field';
+          f2.innerHTML = '<label>回程機票付款卡</label><input type="text" id="ins-in" value="'+(insuranceForm.inbound||'')+'" placeholder="例：XX銀行 XX卡">';
+          bodyEl.appendChild(f2);
+          const f3 = document.createElement('div'); f3.className='form-field';
+          f3.innerHTML = '<label>保險是否已生效</label><select id="ins-conf">' +
+            '<option value="unsure"'+(insuranceForm.confirmed==='unsure'?' selected':'')+'>尚未確認</option>' +
+            '<option value="confirmed"'+(insuranceForm.confirmed==='confirmed'?' selected':'')+'>已確認</option></select>';
+          bodyEl.appendChild(f3);
+          const covTitle = document.createElement('div'); covTitle.className='prep-group-label'; covTitle.textContent='保障項目';
+          bodyEl.appendChild(covTitle);
+          const cov = document.createElement('div'); cov.className='coverage-list';
+          cov.innerHTML = sec.coverage.map(c=>'・'+c).join('<br>');
+          bodyEl.appendChild(cov);
+          const taskTitle = document.createElement('div'); taskTitle.className='prep-group-label'; taskTitle.style.marginTop='14px'; taskTitle.textContent='待辦';
+          bodyEl.appendChild(taskTitle);
+          sec.tasks.forEach(t=>{ const row = renderTaskRow(t); if (row) bodyEl.appendChild(row); });
+
+          setTimeout(()=>{
+            const o=document.getElementById('ins-out'), i=document.getElementById('ins-in'), c=document.getElementById('ins-conf');
+            if (o) o.oninput = ()=>{ insuranceForm.outbound=o.value; saveLS('seoul-prep-insurance-v1', insuranceForm); };
+            if (i) i.oninput = ()=>{ insuranceForm.inbound=i.value; saveLS('seoul-prep-insurance-v1', insuranceForm); };
+            if (c) c.onchange = ()=>{ insuranceForm.confirmed=c.value; saveLS('seoul-prep-insurance-v1', insuranceForm); };
+          }, 0);
+        });
+      } else if (sec.type === 'accordion'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.groups.forEach((g, gi)=>{
+            const item = document.createElement('div'); item.className='accordion-item';
+            const gKey = sec.id+'-'+gi;
+            const headEl = document.createElement('div'); headEl.className='accordion-head';
+            headEl.innerHTML = '<span>'+g.label+'</span><span>'+(state.packingOpen[gKey]?'▲':'▼')+'</span>';
+            headEl.onclick = ()=>{ state.packingOpen[gKey] = !state.packingOpen[gKey]; render(); };
+            item.appendChild(headEl);
+            if (state.packingOpen[gKey]){
+              if (g.note){ const n=document.createElement('div'); n.className='info-card'; n.textContent=g.note; item.appendChild(n); }
+              g.items.forEach((label, ii)=>{
+                const key = gKey+'-'+ii;
+                const checked = !!packingChecked[key];
+                const row = document.createElement('div'); row.className='task-row';
+                const chk = document.createElement('div'); chk.className='task-check'+(checked?' done':'');
+                chk.textContent = checked? '✓':'';
+                chk.onclick = ()=>{ packingChecked[key] = !packingChecked[key]; saveLS('seoul-prep-packing-v1', packingChecked); render(); };
+                row.appendChild(chk);
+                const lab = document.createElement('div'); lab.className='task-label'+(checked?' done-text':''); lab.textContent = label;
+                row.appendChild(lab);
+                item.appendChild(row);
+              });
+            }
+            bodyEl.appendChild(item);
+          });
+        });
+      } else if (sec.type === 'tips'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.tipGroups.forEach(group=>{
+            const gl = document.createElement('div'); gl.className='prep-group-label'; gl.textContent = group.label;
+            bodyEl.appendChild(gl);
+            group.tips.forEach(tip=>{
+              const c = document.createElement('div'); c.className='tip-card';
+              c.innerHTML = '<div class="tip-point">💡 '+tip.point+'</div><div class="tip-conclusion">'+tip.conclusion+'</div>' +
+                (tip.quote ? '<div class="tip-quote">'+tip.quote+'</div><div class="tip-source">來源：'+tip.source+'</div>' : '');
+              bodyEl.appendChild(c);
+            });
+          });
+        });
+      } else if (sec.type === 'trouble'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.scenarios.forEach(sc=>{
+            const c = document.createElement('div'); c.className='trouble-card';
+            c.innerHTML = '<div class="tr-title">'+sc.icon+' '+sc.title+'</div>' +
+              sc.steps.map(s=>'<div class="tr-step">'+s+'</div>').join('');
+            bodyEl.appendChild(c);
+          });
+        });
+      } else if (sec.type === 'toilet'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          bodyEl.innerHTML = '<div class="toilet-word serif">화장실</div>';
+          const btn = document.createElement('a'); btn.className='ext-link primary'; btn.style.display='block'; btn.style.textAlign='center';
+          btn.href = naverUrl('화장실'); btn.target='_blank'; btn.rel='noopener noreferrer'; btn.textContent='🚻 在 NAVER Map 搜尋廁所';
+          bodyEl.appendChild(btn);
+          const chipList = document.createElement('div'); chipList.className='toilet-chip-list';
+          sec.places.forEach(p=>{ const chip=document.createElement('span'); chip.className='toilet-chip'; chip.textContent=p; chipList.appendChild(chip); });
+          bodyEl.appendChild(chipList);
+        });
+      } else if (sec.type === 'chuseokBackup'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          const note = document.createElement('div'); note.className='info-card'; note.textContent = sec.note;
+          bodyEl.appendChild(note);
+          sec.dayGroups.forEach(group=>{
+            const gl = document.createElement('div'); gl.className='prep-group-label'; gl.textContent = group.label;
+            bodyEl.appendChild(gl);
+            group.items.forEach(item=>{
+              const c = document.createElement('div'); c.className='backup-item';
+              c.innerHTML = '<div class="bi-name">'+item.name+'</div><div class="bi-kr">'+item.kr+'</div>' +
+                '<div class="bi-hours">🕐 '+item.hours+'</div><div class="bi-note">'+item.note+'</div>';
+              const actions = document.createElement('div'); actions.className='link-grid'; actions.style.marginTop='8px';
+              const naverA = document.createElement('a'); naverA.className='ext-link primary';
+              naverA.href = naverUrl(item.kr); naverA.target='_blank'; naverA.rel='noopener noreferrer'; naverA.textContent='📍 NAVER';
+              actions.appendChild(naverA);
+              if (item.placeId){
+                const gA = document.createElement('a'); gA.className='ext-link';
+                gA.href = gmapsPlaceUrl(item.placeId); gA.target='_blank'; gA.rel='noopener noreferrer'; gA.textContent='🗺 Google';
+                actions.appendChild(gA);
+              }
+              c.appendChild(actions);
+              bodyEl.appendChild(c);
+            });
+          });
+        });
+      } else if (sec.type === 'contacts'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          sec.contacts.forEach(c=>{
+            const btn = document.createElement('button'); btn.className='contact-btn'+(c.big?' big':'');
+            btn.innerHTML = '<span class="cb-name">'+c.name+'</span><span class="cb-num">'+c.num+'</span>';
+            if (c.tel) btn.onclick = ()=>{ window.location.href = 'tel:'+c.tel; };
+            bodyEl.appendChild(btn);
+          });
+        });
+      } else if (sec.type === 'finalnight'){
+        sectionEl = renderPrepSectionShell(sec, (bodyEl)=>{
+          const list = document.createElement('div'); list.className='final-check-list';
+          sec.tasks.forEach(t=>{ const row = renderTaskRow(t); if (row) list.appendChild(row); });
+          bodyEl.appendChild(list);
+          const tc = document.createElement('div'); tc.className='tomorrow-card';
+          tc.innerHTML = '<div class="tc-label">明天 TOMORROW</div><div class="tc-flight">'+sec.tomorrow.code+'</div><div>'+sec.tomorrow.route+'</div>';
+          bodyEl.appendChild(tc);
+        });
+      }
+      if (sectionEl) wrap.appendChild(sectionEl);
+    });
+
+    mainEl.appendChild(wrap);
+  }
+
+  /* ---------- EMERGENCY MODAL ---------- */
+  function renderEmergency(){
+    const overlay = document.createElement('div'); overlay.className='emergency-overlay';
+    const card = document.createElement('div'); card.className='emergency-card';
+    card.innerHTML = '<h2>🚨 護照遺失怎麼辦</h2>' +
+      '<div class="em-step"><div class="es-num">STEP 1</div><div class="es-text">到韓國警察局申報護照遺失。</div></div>' +
+      '<div class="em-step"><div class="es-num">STEP 2</div><div class="es-text">聯絡駐韓國台北代表部。<br><b>Taipei Mission in Korea</b><br>서울특별시 종로구 세종대로 149 광화문빌딩 6층<br>一般電話：+82-2-6329-6000<br>急難救助：+82-10-9080-2761</div></div>' +
+      '<div class="link-grid" style="margin-bottom:12px;">' +
+        '<a class="ext-link primary" href="tel:+82226329600">📞 打一般電話</a>' +
+        '<a class="ext-link" href="tel:+821090802761">📞 急難救助</a>' +
+        '<a class="ext-link" href="'+naverUrl('광화문빌딩 세종대로149')+'" target="_blank" rel="noopener noreferrer">📍 NAVER Map</a>' +
+      '</div>' +
+      '<div class="em-step"><div class="es-num">STEP 3</div><div class="es-text">依代表部指示辦理護照／緊急旅行文件，以及韓國出入境相關手續。</div></div>' +
+      '<div class="em-step"><div class="es-num">補充</div><div class="es-text">台灣境內「旅外國人急難救助服務專線」：0800-085-095（供國內親友聯繫使用）</div></div>';
+    const closeBtn = document.createElement('button'); closeBtn.className='em-close'; closeBtn.textContent='關閉';
+    closeBtn.onclick = ()=>{ state.emergencyOpen = false; render(); };
+    card.appendChild(closeBtn);
+    overlay.appendChild(card);
+    overlay.onclick = (e)=>{ if (e.target === overlay){ state.emergencyOpen = false; render(); } };
+    document.getElementById('tg-app').appendChild(overlay);
+  }
+
+  /* ---------- MAIN RENDER ---------- */
+  function render(){
+    const savedScrollY = window.scrollY;
+    mainEl.innerHTML = '';
+    document.querySelectorAll('#tg-app .modal-overlay, #tg-app .emergency-overlay, #tg-app .emergency-fab').forEach(el=>el.remove());
+
+    renderTabNav();
+
+    if (state.view === 'prep') renderPrep();
+    else if (state.view === 'day') renderDay();
+    else if (state.view === 'places') renderPlaces();
+    else if (state.view === 'sources') renderSources();
+
+    document.getElementById('tg-app').appendChild(emergencyBtn);
+    if (state.detailId) renderDetail();
+    if (state.emergencyOpen) renderEmergency();
+
+    requestAnimationFrame(()=>{ window.scrollTo(0, state.resetScroll ? 0 : savedScrollY); });
+    state.resetScroll = false;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
