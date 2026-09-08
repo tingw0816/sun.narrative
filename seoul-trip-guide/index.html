@@ -238,7 +238,7 @@
   function loadLS(key, fallback){ try{ var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
   function saveLS(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
 
-  const ICONS = { transport:'🚇', pokemon:'🎮', food:'🍜', cafe:'☕', shopping:'🛍️', hotel:'🏨', sight:'🌉' };
+  const ICONS = { transport:'🚇', pokemon:'🎮', food:'🍜', cafe:'☕', shopping:'🛍️', hotel:'🏨', sight:'🌉', note:'🚶' };
 
   /* ================= ITINERARY DATA (unchanged from before) ================= */
   const PLACES = {
@@ -248,16 +248,28 @@
       lat:37.4475036, lng:126.4523967, placeId:'ChIJ9WkhZNCbezURm91nh0xUHZc', links:{}, cautions:'入境動線較長，預留充裕時間' },
     t4: { id:'t4', area:'仁川機場', kind:'transport', tag:'Transport', nameZh:'LG U+ 機場漫遊中心', nameKr:'LG유플러스 로밍센터', nameRoman:'LG U+ Roaming Center T1',
       addr:'인천광역시 중구 공항로 272, 1층（Gate F／Gate A附近）', hours:'24小時', nearestStation:'第1航廈入境大廳',
-      budget:'依方案而定', why:'抵達後第一件事：拿 eSIM QR＋CHECK iN SEOUL 卡', soloFriendly:'ok',
+      budget:'依方案而定', why:'抵達後第一件事：完成護照確認並領取 eSIM QR code＋CHECK iN SEOUL 實體卡', soloFriendly:'ok',
       lat:37.4472405, lng:126.4501858, placeId:'ChIJWWgVO92bezUR420PT3F4f64', rating:'3.4★（54則）', links:{},
-      cautions:'現場常有排隊，Klook等預先購買可縮短等待' },
+      cautions:'現場常有排隊，Klook等預先購買可縮短等待',
+      checklist:['確認 eSIM 是否成功啟用','確認是否有韓國 010 電話號碼','如需要主動撥打電話，可現場詢問是否追加語音額度'] },
     t5: { id:'t5', area:'仁川機場', kind:'pokemon', tag:'Pokémon', nameZh:'HiKR Station', nameKr:'하이커 스테이션', nameRoman:'HiKR Station',
       addr:'인천광역시 중구 공항로 271, 국제선여객터미널 B1', hours:'10:00–19:00', nearestStation:'第1航廈 交通中心 B1',
-      budget:'免費入場', why:'落地就能玩 Pokémon GO＋蓋 Stamp Rally 第一章', soloFriendly:'ok',
+      budget:'免費入場', why:'落地就能玩 Pokémon GO＋蓋 Stamp Rally 第一章，2026秋季活動期間可自由參加現場活動', soloFriendly:'ok',
       lat:37.4476926, lng:126.4520939, placeId:'ChIJm-EhqwmbezURFRSGCxJBBx0', rating:'4.8★（229則）',
-      links:{ official:'https://english.visitkorea.or.kr/svc/sp/hikr' },
-      pokemon:{ entry:'免費入場，無需預約', queue:'現場自由進出', merch:'部分周邊販售，實際品項依現場為準', stampRally:'HiKR Stamp Rally 第一站', goEvent:'可同時進行 Pokémon GO 一般遊玩' },
-      cautions:'僅為官方文化空間常態設施，非限時活動' },
+      links:{ official:'https://english.visitkorea.or.kr/svc/sp/hikr', naver:naverUrl('인천공항 하이커 스테이션') },
+      pokemon:{ eventDate:'2026年9月18日–10月11日', entry:'免費入場，可自由參加現場活動，無需預約', queue:'現場自由進出', merch:'部分周邊販售，實際品項依現場為準', stampRally:'HiKR Stamp Rally 第一站', goEvent:'現場活動期間可能取得限定免費限時研究，實際內容依現場公告為準' },
+      cautions:'⚠️此為官方文化空間常態設施，2026/9/18–10/11期間另有Pokémon GO秋季活動內容，實際安排以現場公告為準',
+      variableInfo:true },
+    ses1: { id:'ses1', area:'仁川機場', kind:'transport', tag:'Transport', activity:'📝 行政手續', nameZh:'SES 自動出入境審查 登錄', nameKr:'SES 자동출입국심사 등록', nameRoman:'Smart Entry Service (SES) Registration',
+      addr:'인천국제공항 제1터미널 3층, H 체크인카운터 맞은편（仁川機場T1 3F，H Check-in Counter對面）', hours:'依機場作業時間', nearestStation:'仁川機場 T1 3F',
+      budget:'免費', why:'完成登錄後，之後符合條件的出入境可使用自動通關（本次入境仍需先完成一般入境程序）', soloFriendly:'ok',
+      cautions:'⚠️建議預留20～30分鐘；請攜帶台灣電子護照。第一次登錄當次仍走一般入境審查，SES從下次符合條件的出入境開始生效。', links:{} },
+    gaeup1: { id:'gaeup1', cuisine:'🍚 韓食美食街', area:'仁川機場', kind:'food', tag:'Food', nameZh:'가업식당', nameKr:'가업식당', nameRoman:'Gaeup Sikdang',
+      addr:'인천국제공항 제1터미널 지하1층（仁川機場T1 B1美食街）', hours:'依美食街營業時間', nearestStation:'仁川機場 T1 B1',
+      budget:'依品項', why:'機場美食街，雪濃湯、全州拌飯、手工豆腐等選擇多，適合抵達當天午餐', soloFriendly:'ok',
+      food:{ minOrder:'單人即可點餐', recommendedDish:'推薦順位：① 全州拌飯 ② 雪濃湯 ③ 豆腐料理', hasKiosk:true, hasForeignMenu:'四語自助點餐' },
+      badges:['一人旅友善','四語自助點餐','出餐快'],
+      cautions:'⚠️實際入駐品牌與菜單可能更換，以當日現場為準', variableInfo:true, links:{} },
     t2: { id:'t2', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'新設洞站', nameKr:'신설동역', nameRoman:'Sinseol-dong Station',
       addr:'서울특별시 동대문구 신설동 일대', hours:'依地鐵營運時間', nearestStation:'1號線・2號線交會站',
       budget:'—', why:'離飯店最近的地鐵站', soloFriendly:'ok', lat:37.575326, lng:127.024849, placeId:'ChIJpxEgjkyjfDURdE1D0-t8owY',
@@ -267,6 +279,8 @@
       nearestStation:'新設洞站 步行約5–8分鐘', budget:'依訂房', why:'本次住宿', soloFriendly:'ok',
       lat:37.577088, lng:127.022941, placeId:'ChIJHbtS1yqjfDURtGcgLif08lA', rating:'2.5★（4則，樣本較少）', links:{},
       cautions:'地址有兩個版本，強烈建議出發前跟訂房平台再核對一次' },
+    mega1: { id:'mega1', cuisine:'☕ 咖啡・外帶', area:'鐘路・清溪川', kind:'cafe', tag:'Cafe', nameZh:'MEGA MGC Coffee 新設洞站店', nameKr:'메가MGC커피 신설동역점', nameRoman:'MEGA MGC Coffee Sinseol-dong Station',
+      nearestStation:'新設洞站 步行約5–8分鐘', why:'入住後彈性選項：外帶咖啡再前往鐘路，非必去景點', soloFriendly:'ok', links:{} },
     p3: { id:'p3', area:'鐘路・清溪川', kind:'pokemon', tag:'Pokémon', nameZh:'鐘路3街站', nameKr:'종로3가역', nameRoman:'Jongno 3-ga Station',
       addr:'서울특별시 종로구 종로3가', hours:'依地鐵營運時間', nearestStation:'1・3・5號線交會站',
       budget:'—', why:'第一天 Pokémon GO 主要區域', soloFriendly:'ok', lat:37.570436, lng:126.992148, placeId:'ChIJm4u5qeCifDURKoTCTVSt134',
@@ -307,10 +321,21 @@
       budget:'免費入場', why:'官方確認：2026/9/18–10/11 整棟變身寶可夢主題空間', soloFriendly:'ok',
       lat:37.5685891, lng:126.9818622, placeId:'ChIJ_xCS_d-jfDURgqxl66H3dd8', rating:'4.6★（1,119則）',
       links:{ official:'https://english.visitkorea.or.kr/svc/sp/hikr' },
-      pokemon:{ eventDate:'2026年9月18日–10月11日（韓國觀光公社官方公告）', entry:'免費入場', reservation:'公開資訊未提及需預約',
+      pokemon:{ eventDate:'2026年9月18日–10月11日（韓國觀光公社官方公告）', entry:'一般參觀：免費入場，現場排隊入場即可', reservation:'一般參觀公開資訊未提及需預約',
         queueMethod:'現場排隊入場即可', merch:'5樓設有快閃店', stampRally:'1–3樓為展示與拍照區，含皮卡丘穿韓服等主題造景',
+        boothInfo:'⚠️Pokémon GO 現場 booth 需要另外預約，與樓層一般參觀分開計算', boothReservation:'預約方式與時段請以官方公告為準，出發前再次確認',
         goEvent:'與 Pokémon GO 遊戲內活動是否連動未提及，建議另查 pokemongo.com/ko/news' },
-      cautions:'資訊來源為媒體報導非官方一手公告，出發前建議再看HiKR官網確認', sourceUrl:'https://view.asiae.co.kr/en/article/2026083115100741327' },
+      cautions:'⚠️一般參觀展區不需預約，但Pokémon GO現場booth需要另外預約；資訊來源為媒體報導非官方一手公告，出發前建議再看HiKR官網確認',
+      sourceUrl:'https://view.asiae.co.kr/en/article/2026083115100741327', variableInfo:true },
+    cityhall1: { id:'cityhall1', area:'鐘路・清溪川', kind:'pokemon', tag:'Pokémon', nameZh:'首爾市廳 B1 我的朋友首爾・首爾畫廊', nameKr:'내 친구 서울 서울갤러리', nameRoman:'Seoul City Hall B1 - My Friend Seoul, Seoul Gallery',
+      addr:'서울 중구 세종대로 110 서울시청 지하1층', hours:'官方後續公告', nearestStation:'市廳站',
+      budget:'—', why:'Pokémon GO 現場活動之一，可參與活動限定免費限時研究', soloFriendly:'ok',
+      links:{ naver:naverUrl('서울시청') },
+      pokemon:{ eventDate:'2026年9月18日–10月11日', entry:'現場參加', reservation:'不確定，請以官方公告為準',
+        queueMethod:'不確定，請以官方公告為準', merch:'—', stampRally:'—', goEvent:'可參與活動限定免費限時研究' },
+      cautions:'⚠️營業時間、入場方式目前請以官方後續公告為準', variableInfo:true },
+    flex1: { id:'flex1', area:'鐘路・清溪川', kind:'note', tag:'其他', nameZh:'鐘路・清溪川 自由散步（有體力再追加）',
+      why:'保留原有鐘路、清溪川、鐘閣、乙支路路線，不強制全部走完，依當天體力彈性安排，詳見「地點收藏」分類', soloFriendly:'ok', links:{} },
     m1: { id:'m1', cuisine:'🍲 牛骨湯', area:'明洞', kind:'food', tag:'Food', nameZh:'神仙雪濃湯 明洞店', nameKr:'신선설농탕 명동점', nameRoman:'Shinsun Seolnongtang Myeongdong',
       addr:'서울특별시 중구 명동2가 2-2, 2층', hours:'8:00–21:00', nearestStation:'明洞站 步行約5分鐘', budget:'約₩12,000–18,000',
       why:'一人旅安全牌', soloFriendly:'ok', lat:37.5637994, lng:126.9854142, placeId:'ChIJofQIDw6jfDURbL-Kml7xkVE',
@@ -422,8 +447,9 @@
       food:{ minOrder:'個人套餐制', recommendedDish:'牛豬綜合套餐', hasKiosk:true, hasForeignMenu:'觸控點餐，語言請現場確認' } },
     leg1: { id:'leg1', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'6002 機場巴士 → 新設洞', nameKr:'6002번 공항버스', nameRoman:'Airport Bus 6002',
       addr:'仁川機場 → 新設洞一帶', hours:'依巴士時刻表', nearestStation:'—', budget:'約₩10,000–17,000', why:'機場到飯店最主要交通方式',
-      soloFriendly:'ok', transport:{ from:'인천공항 (T1)', to:'신설동역 부근', line:'6002號 機場巴士', estTime:'約70–100分鐘', note:'座位有限，建議先查詢即時時刻表' },
-      links:{ naver:naverUrl('6002번 공항버스') } },
+      soloFriendly:'ok', transport:{ from:'인천공항 (T1)', to:'신설동역 부근', line:'6002號 機場巴士', estTime:'約70–100分鐘',
+        note:'建議先確認當日售票方式、先買票再去排隊最安心；現場可能排隊，保留20～30分鐘緩衝；不要把某一班車時間寫死，出發前再查即時時刻表' },
+      links:{ naver:naverUrl('6002번 공항버스') }, variableInfo:true },
     leg2: { id:'leg2', area:'交通移動', kind:'transport', tag:'Transport', nameZh:'地鐵：新設洞 → 鐘路3街', nameKr:'신설동역 → 종로3가역', nameRoman:'Subway: Sinseol-dong → Jongno 3-ga',
       addr:'—', hours:'依地鐵營運時間', nearestStation:'—', budget:'約₩1,400起', why:'從飯店前往第一天Pokémon GO主區域', soloFriendly:'ok',
       transport:{ from:'신설동역', to:'종로3가역', line:'1號線（不需轉乘）', estTime:'約2站，5–8分鐘', note:'確切月台請以站內看板為準' }, links:{}, lat:37.570436, lng:126.992148 },
@@ -611,12 +637,14 @@
 
   const DAYS = [
     { key:'day1', date:'9/26（六）', title:'抵達＋機場 Pokémon＋鐘路', desc:'11:30抵達仁川，先蓋Pokémon Stamp，再進城入住，晚上鐘路散步吃燒肉。', tags:['Transport','Pokémon','Food'],
-      stops: [ {ref:'t3', time:'11:30'}, {ref:'t4', time:'11:45'}, {ref:'t5', time:'12:15'}, {ref:'leg1', time:'13:00'}, {ref:'t2', time:'14:30'},
-        {ref:'t1', time:'15:00'}, {ref:'leg2', time:'16:30'}, {ref:'p3', time:'17:00'}, {ref:'p4', time:'17:30'}, {ref:'p5', time:'18:00'}, {ref:'f1', time:'19:00'} ],
+      stops: [ {ref:'t3', time:'11:30'}, {ref:'t4', time:'11:45'}, {ref:'ses1', time:'12:05'}, {ref:'t5', time:'12:30'}, {ref:'gaeup1', time:'13:00'},
+        {ref:'leg1', time:'14:00'}, {ref:'t2', time:'15:30'}, {ref:'t1', time:'15:45'}, {ref:'mega1', time:'16:00'}, {ref:'leg2', time:'16:30'},
+        {ref:'p3', time:'17:00'}, {ref:'p4', time:'17:30'}, {ref:'p5', time:'18:00'}, {ref:'f1', time:'19:00'} ],
       endNote:'🏨 晚上回新設洞飯店休息' },
-    { key:'day2', date:'9/27（日）', title:'聖水 Pokopia＋HiKR＋明洞', desc:'白天在聖水追Pokopia，下午HiKR Ground整棟寶可夢主題空間，晚上明洞購物吃飯。', tags:['Pokémon','Food','Shopping','Cafe'],
+    { key:'day2', date:'9/27（日）', title:'聖水 Pokopia＋HiKR＋明洞', desc:'白天在聖水追Pokopia，下午HiKR Ground整棟寶可夢主題空間、首爾市廳Pokémon GO活動，晚上明洞購物吃飯。', tags:['Pokémon','Food','Shopping','Cafe'],
       stops: [ {ref:'leg3', time:'早上'}, {ref:'p1', time:'11:00'}, {ref:'s1', time:'13:00'}, {ref:'leg4', time:'14:00'}, {ref:'p2', time:'14:30'},
-        {ref:'leg5', time:'17:30'}, {ref:'m1', time:'19:00'} ], endNote:'☕ 有體力的話推薦 THE SPOT FABULOUS（舊大使館建築改造，明洞咖啡廳），沒有就直接回飯店' },
+        {ref:'cityhall1', time:'15:30'}, {ref:'flex1', time:'16:15（彈性）'}, {ref:'leg5', time:'17:30'}, {ref:'oy2', time:'18:00'}, {ref:'m1', time:'19:00'} ],
+      endNote:'☕ 有體力的話推薦 THE SPOT FABULOUS（舊大使館建築改造，明洞咖啡廳），沒有就直接回飯店' },
     { key:'day3', date:'9/28（一）', title:'早上補買＋仁川機場', desc:'新設洞早餐、外帶咖啡，回飯店拿行李後前往機場退稅，15:00飛機回日本。', tags:['Food','Transport'],
       stops: [ {ref:'brk1', time:'08:30'}, {ref:'cof1', time:'09:10'}, {ref:'n_pack', time:'09:20–09:30'}, {ref:'leg6', time:'10:15–10:30'}, {ref:'t3b', time:'12:00'} ], endNote:'✈️ 15:00 班機起飛，回日本' }
   ];
@@ -629,6 +657,12 @@
     { name:'香蕉牛奶造型商品', kr:'바나나맛우유', note:'韓國經典造型，識別度高，適合當話題伴手禮', pack:'單瓶包裝', where:'便利商店、超市', servings:'1人1瓶' },
     { name:'人蔘糖／人蔘茶包', kr:'인삼사탕', note:'耐放不易壞，韓國感十足', pack:'盒裝內獨立小包', where:'機場免稅店、市區超市', servings:'可分裝10人以上' },
     { name:'Market O 布朗尼', kr:'마켓오 리얼브라우니', note:'知名度高、包裝精美，送禮體面', pack:'盒裝內獨立小包', where:'超市、機場', servings:'一盒約6-8人分' }
+  ];
+
+  const POKEMON_EVENTS = [
+    { ref:'t5', naverQuery:'인천공항 하이커 스테이션', reservation:'不需要，可自由參加', day:'9/26 順路', tags:['9/26 順路','可自由參加'] },
+    { ref:'p2', naverQuery:'하이커 그라운드', reservation:'一般參觀不需要；Pokémon GO 現場 booth 需要另外預約', day:'9/27 主力', tags:['9/27 主力','需預約','可自由參加'] },
+    { ref:'cityhall1', naverQuery:'서울시청', reservation:'不確定，請以官方公告為準', day:'9/27 主力', tags:['9/27 主力','可自由參加'] }
   ];
 
   const SOURCES = {
@@ -922,11 +956,15 @@
       const body = document.createElement('div');
       body.className = 'stop-body';
       let html = '<div class="stop-time">'+s.time+'</div><div class="stop-name">'+place.nameZh+'</div>' +
-        '<div class="stop-kr">'+place.nameKr+'</div>' +
+        '<div class="stop-kr">'+(place.nameKr||'')+'</div>' +
         (place.cuisine || place.activity ? '<div class="stop-cuisine">'+(place.cuisine||place.activity)+'</div>' : '') +
         '<div class="stop-highlight">'+ (place.why || '') +'</div>';
       if (place.backups && place.backups.length){
         html += '<div class="stop-alt">備案：'+ place.backups.map(id=>PLACES[id].nameZh).join('、') +'</div>';
+      }
+      if (place.cautions || place.variableInfo){
+        html += '<div style="margin-top:4px;">' + (place.variableInfo ? '<span class="task-badge" style="color:var(--unsure);">⚠️ 資訊可能異動</span> ' : '') +
+          (place.cautions ? '<span class="task-badge">注意事項見詳細頁</span>' : '') + '</div>';
       }
       body.innerHTML = html;
       const btn = document.createElement('button');
@@ -1075,6 +1113,31 @@
     });
   }
 
+  function renderPokemonEventsOverview(wrap){
+    const heading = document.createElement('div'); heading.className='day-heading'; heading.style.marginLeft='0';
+    heading.textContent = '2026 皮卡丘秋日野餐 現場活動';
+    wrap.appendChild(heading);
+    const card = document.createElement('div'); card.className='section-block'; card.style.margin='0 0 14px';
+    card.innerHTML = POKEMON_EVENTS.map((ev, i)=>{
+      const p = PLACES[ev.ref];
+      const tagsHtml = ev.tags.map(t=>'<span class="task-badge" style="margin:2px 4px 2px 0;">'+t+'</span>').join('');
+      const rowStyle = i===0 ? 'padding:0 0 10px;' : 'padding:10px 0;border-top:1px solid var(--paper2);';
+      return '<div style="'+rowStyle+'">' +
+        '<div class="stop-name" style="cursor:pointer;" data-open="'+p.id+'">'+p.nameZh+'</div>' +
+        '<div class="stop-kr">'+(p.nameKr||'')+'</div>' +
+        '<div class="info-row" style="margin-top:6px;"><div class="i-label">地址</div><div class="i-val">'+(p.addr||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">NAVER搜尋</div><div class="i-val">'+ev.naverQuery+'</div></div>' +
+        '<div class="info-row"><div class="i-label">活動期間</div><div class="i-val">'+(p.pokemon&&p.pokemon.eventDate||'—')+'</div></div>' +
+        '<div class="info-row"><div class="i-label">是否需預約</div><div class="i-val">'+ev.reservation+'</div></div>' +
+        '<div class="info-row"><div class="i-label">一人友善</div><div class="i-val">'+(p.soloFriendly==='ok'?'OK':'不確定，建議現場詢問')+'</div></div>' +
+        '<div style="margin-top:6px;">'+tagsHtml+'</div></div>';
+    }).join('');
+    wrap.appendChild(card);
+    card.querySelectorAll('[data-open]').forEach(el=>{
+      el.onclick = ()=> openDetail(el.getAttribute('data-open'));
+    });
+  }
+
   function renderPlaces(){
     const wrap = document.createElement('div');
     const topBar = document.createElement('div'); topBar.className='top-bar';
@@ -1106,6 +1169,10 @@
       wrap.appendChild(fl2);
       document.getElementById('toSourcesLink2').onclick = (e)=>{ e.preventDefault(); go('sources'); };
       return;
+    }
+
+    if (state.filter === '寶可夢'){
+      renderPokemonEventsOverview(wrap);
     }
 
     const AREA_ORDER = ['仁川機場','交通移動','鐘路・清溪川','景福宮周邊（延伸推薦）','聖水','明洞','東大門','弘大方向（較遠）','汝矣島（額外景點，離主行程較遠）'];
@@ -1240,6 +1307,17 @@
     }
     body.appendChild(grid);
 
+    if (p.variableInfo){
+      const warn = document.createElement('div'); warn.className='due-soon'; warn.style.margin='0 0 14px';
+      warn.innerHTML = '<div class="due-item" style="font-weight:600;">⚠️ 現場營運時間、預約方式、入駐店家與活動內容可能調整，出發前請再次確認官方公告。</div>';
+      body.appendChild(warn);
+    }
+    if (p.checklist && p.checklist.length){
+      const block = document.createElement('div'); block.className='section-block';
+      block.innerHTML = '<h4>詳細確認項目</h4>' + p.checklist.map(c=>'<div class="trouble-card" style="margin-bottom:6px;padding:8px 12px;"><div class="tr-step" style="padding-left:0;">'+c+'</div></div>').join('');
+      body.appendChild(block);
+    }
+
     if (p.kind === 'food'){
       const block = document.createElement('div'); block.className='section-block';
       block.innerHTML = '<h4>一人用餐資訊</h4>' + soloBadge(p.soloFriendly);
@@ -1248,6 +1326,9 @@
           '<div class="info-row"><div class="i-label">推薦料理</div><div class="i-val">'+(f.recommendedDish||'不確定')+'</div></div>' +
           '<div class="info-row"><div class="i-label">Kiosk</div><div class="i-val">'+(f.hasKiosk? '有':'不確定／無')+'</div></div>' +
           '<div class="info-row"><div class="i-label">外語菜單</div><div class="i-val">'+(f.hasForeignMenu||'不確定')+'</div></div>'; }
+      if (p.badges && p.badges.length){
+        block.innerHTML += '<div style="margin-top:10px;">' + p.badges.map(b=>'<span class="task-badge" style="margin-right:6px;">'+b+'</span>').join('') + '</div>';
+      }
       body.appendChild(block);
     }
     if (p.kind === 'pokemon'){
@@ -1262,6 +1343,13 @@
         '<div class="info-row"><div class="i-label">Stamp Rally</div><div class="i-val">'+(pk.stampRally||'—')+'</div></div>' +
         '<div class="info-row"><div class="i-label">GO內活動</div><div class="i-val">'+(pk.goEvent||'不確定')+'</div></div>';
       body.appendChild(block);
+      if (pk.boothInfo){
+        const boothBlock = document.createElement('div'); boothBlock.className='section-block';
+        boothBlock.innerHTML = '<h4>Pokémon GO 現場 Booth（與一般參觀分開）</h4>' +
+          '<div class="info-row"><div class="i-label">Booth 說明</div><div class="i-val">'+pk.boothInfo+'</div></div>' +
+          (pk.boothReservation ? '<div class="info-row"><div class="i-label">預約方式</div><div class="i-val">'+pk.boothReservation+'</div></div>' : '');
+        body.appendChild(boothBlock);
+      }
       if (p.sourceUrl){ const s=document.createElement('div'); s.style.fontSize='11px'; s.style.color='var(--muted)'; s.style.marginTop='8px';
         s.innerHTML = '資訊來源：<a href="'+p.sourceUrl+'" target="_blank" rel="noopener noreferrer" style="color:var(--accent2)">'+p.sourceUrl+'</a>'; block.appendChild(s); }
     }
