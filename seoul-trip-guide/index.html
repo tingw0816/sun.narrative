@@ -962,9 +962,8 @@
       if (place.backups && place.backups.length){
         html += '<div class="stop-alt">備案：'+ place.backups.map(id=>PLACES[id].nameZh).join('、') +'</div>';
       }
-      if (place.cautions || place.variableInfo){
-        html += '<div style="margin-top:4px;">' + (place.variableInfo ? '<span class="task-badge" style="color:var(--unsure);">⚠️ 資訊可能異動</span> ' : '') +
-          (place.cautions ? '<span class="task-badge">注意事項見詳細頁</span>' : '') + '</div>';
+      if (place.variableInfo){
+        html += '<div style="margin-top:4px;"><span class="task-badge" style="color:var(--unsure);">⚠️ 資訊可能異動</span></div>';
       }
       body.innerHTML = html;
       const btn = document.createElement('button');
